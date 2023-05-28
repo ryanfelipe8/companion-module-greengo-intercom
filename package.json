@@ -1,0 +1,22 @@
+{
+  "name": "green-go-intercom",
+  "version": "0.0.1",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint:raw": "eslint --ext .ts --ext .js --ignore-pattern dist --ignore-pattern pkg",
+    "lint": "yarn lint:raw ."
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bitfocus/companion-module-green-go-intercom.git"
+  },
+  "dependencies": {
+    "@companion-module/base": "~1.0",
+    "osc": "^2.4.4"
+  },
+  "devDependencies": {
+    "@companion-module/tools": "^1.0.2"
+  }
+}

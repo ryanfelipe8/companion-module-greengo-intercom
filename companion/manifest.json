@@ -1,0 +1,26 @@
+{
+	"id": "green-go-intercom2",
+	"name": "green-go-intercom2",
+	"shortname": "GGO Device2",
+	"description": "Module to control Green-GO intercom devices",
+	"version": "0.0.1",
+	"license": "MIT",
+	"repository": "git+https://github.com/bitfocus/companion-module-green-go-intercom.git",
+	"bugs": "https://github.com/bitfocus/companion-module-green-go-intercom/issues",
+	"maintainers": [
+		{
+			"name": "Timo Toups",
+			"email": "github@timotoups.de"
+		}
+	],
+	"legacyIds": ["greengo2", "greengo-intercom2"],
+	"runtime": {
+		"type": "node18",
+		"api": "nodejs-ipc",
+		"apiVersion": "0.0.0",
+		"entrypoint": "../main.js"
+	},
+	"manufacturer": "Green-GO",
+	"products": ["Intercom Remote (OSC)2"],
+	"keywords": ["Intercom"]
+}
