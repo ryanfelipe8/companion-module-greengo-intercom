@@ -11,87 +11,118 @@ class GreenGoModule extends InstanceBase {
 
 		// Initialize OSC Server
 		this.osc = new OSCServer(this)
-		// Listen for the variableUpdated event
-		this.osc.on('variableUpdated', (variableName, value) => {
-			// The variableName and value parameters contain the name and new value of the updated variable
-			this.companionVariables[variableName] = value
-			this.log(`Variable ${variableName} was updated to ${value}`)
-		})
+	}
+
+	async initializeOsc() {
+		if (this.config.host && this.config.port) {
+			try {
+				await this.osc.init(this.config, this.companionVariables)
+
+				this.log(
+					'info',
+					'Main: Initialized OSC Manager using configuration: ' +
+						JSON.stringify({
+							host: this.config.host,
+							port: this.config.port,
+						})
+				)
+			} catch (error) {
+				this.log(
+					'warn',
+					'Main: Could not initialize OSC Manager using configuration: ' +
+						JSON.stringify({
+							host: this.config.host,
+							port: this.config.port,
+						})
+				)
+				this.updateStatus(InstanceStatus.Warning)
+			}
+			this.updateStatus(InstanceStatus.Ok)
+		}
+	}
+
+	async updateVariables() {
+		// Check each variable for the default values
+		for (const variableName of Object.keys(this.companionVariables)) {
+			const value = this.companionVariables[variableName].value
+			if (value == -99 || value == -1) {
+				// Initiate update request
+				this.osc.requestStateUpdate()
+				this.log('info', `Main: Found variable(s) using intial values: "${variableName}", requested update`)
+				// Break loop after first match to avoid sending multiple requests
+				break
+			}
+		}
 	}
 
 	async init(config) {
 		this.config = config
 		// Initialize the variables
-		let variablesModule = UpdateVariableDefinitions(this, this.companionVariables)
+		let variablesModule = UpdateVariableDefinitions(this)
 		this.companionVariables = variablesModule.companionVariables
 		if (this.companionVariables.state_channel_talk_ch1 == undefined) {
-			this.log('warning', 'Creation or initialization of variables failed')
+			this.log('warning', 'Main: Definitions are empty')
 		}
 
-		this.log('info', `Found a variable: ${JSON.stringify(this.companionVariables.state_talk_ch1)}`)
+		// Initialize OSC
+		await this.initializeOsc()
 
-		// Initialize OSC if the necessary configuration parameters are present
-		if (this.config.host && this.config.port) {
-			this.osc.init(this.config, this.companionVariables)
-			this.updateStatus(InstanceStatus.Ok)
-		}
-
-		// Check each variable for the specific values
-		const needsUpdate = Object.keys(this.companionVariables).some((variableName) => {
-			const valueObj = this.companionVariables[variableName]
-			return valueObj.value == -99 || valueObj.value == -1
+		// Listen for the variableUpdated event
+		this.osc.on('variableUpdated', (variableName, value) => {
+			if (this.companionVariables[variableName]) {
+				this.companionVariables[variableName].value = value
+				// this.log('debug', `Received update for variable ${variableName}, new value: ${value}`)
+			} else {
+				this.log(
+					'warn',
+					`Main: Received update for unkown variable ${variableName} ${JSON.stringify(
+						this.companionVariables[variableName]
+					)}`
+				)
+			}
 		})
+		this.updateStatus(InstanceStatus.Ok)
 
-		if (needsUpdate) {
-			this.osc.requestStateUpdate()
-		}
+		// Update variable values
+		await this.updateVariables()
 
-		//this.updateActions() // export actions
+		this.updateActions()
 		//this.updateFeedbacks() // export feedbacks
 	}
 
 	// When module gets deleted
 	async destroy() {
-		this.log('debug', 'destroy')
+		this.log('debug', 'Main: Issued destroy command')
 
 		// If OSC has been initialized, try to close the OSC connection
 		if (this.osc) {
 			this.osc.destroy()
 			delete this.osc
-			this.log('debug', 'OSC connection destroyed successfully.')
+			this.log('debug', 'Main: Destroyed OSC Manager')
 		}
 	}
 
 	async configUpdated(config) {
+		this.log('info', 'Main: Config reload detected')
+		// Recording previous configuration
+		const oldConfig = this.config
 		this.config = config
-		this.log('info', 'Updating')
-		// Update missing or delete unused variables
-		let variablesModule = UpdateVariableDefinitions(this, this.companionVariables)
-		this.companionVariables = variablesModule.companionVariables
-		if (this.companionVariables.state_channel_talk_ch1 == undefined) {
-			this.log('warning', 'Re-initialization of variables failed')
+		// Re-initialize variables
+		if (oldConfig.deviceType !== this.config.deviceType) {
+			let variablesModule = UpdateVariableDefinitions(this)
+			this.companionVariables = variablesModule.companionVariables
+			if (this.companionVariables.state_channel_talk_ch1 == undefined) {
+				this.log('warning', 'Main: Re-initialization of variables failed')
+			}
 		}
-		this.log('info', `Found a variable: ${JSON.stringify(this.companionVariables.state_talk_ch1)}`)
-
-		// Reinitialize OSC if the configuration has been updated and the necessary parameters are present
-		if (this.config.host && this.config.port) {
-			this.osc.init(this.config, this.companionVariables)
-			this.updateStatus(InstanceStatus.Ok)
-		} else {
-			this.updateStatus(InstanceStatus.Warning)
-			this.log('warn', 'Cannot reinitialize OSC: Check configuration for remote host and port.')
+		// Reinitialize OSC if the configuration has been updated
+		if (oldConfig.host !== this.config.host || oldConfig.port !== this.config.port) {
+			{
+				await this.initializeOsc()
+			}
 		}
-
-		// Check each variable for the specific values
-		const needsUpdate = Object.keys(this.companionVariables).some((variableName) => {
-			const value = this.companionVariables[variableName].value
-			this.log('debug', `Checking variable for default value: ${variableName} is ${JSON.stringify(value)}`)
-			return value == -99 || value == -1
-		})
-
-		if (needsUpdate) {
-			this.osc.requestStateUpdate()
-		}
+		// Update variable values
+		await this.updateVariables()
 	}
 
 	// Return config fields for web config
