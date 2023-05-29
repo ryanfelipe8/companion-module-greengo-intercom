@@ -8,6 +8,8 @@ class OscModule extends EventEmitter {
 		this.module = module
 		this.oscServer = null
 		this.oscClient = null
+		this.stateUpdateTimer = null
+		this.heartbeatTimer = null
 		this.updatesCollector = new VariableUpdatesCollector(this.updateVariableValues.bind(this))
 	}
 
@@ -67,13 +69,28 @@ class OscModule extends EventEmitter {
 	}
 
 	onMessage(oscMsg) {
-		// Ignore state update messages
-		if (oscMsg.address === '/ggo/state/update') {
+		// Check if the message is a heartbeat
+		if (oscMsg.address === '/ggo/state/heartbeat') {
+			// Reset the heartbeat variable to 1
+			this.updateVariableValues({ state_heartbeat: 1 })
+
+			// Clear the existing heartbeat timer if it exists
+			if (this.heartbeatTimer) {
+				clearTimeout(this.heartbeatTimer)
+			}
+
+			// Start a new heartbeat timer
+			this.heartbeatTimer = setTimeout(() => this.handleHeartbeat(), 5000)
 			return
 		}
 		// this.module.log('debug', `OSC Manager: Received message for ${oscMsg.address}: ${JSON.stringify(oscMsg.args)}`)
 		// Handle command and state messages
 		if (oscMsg.address.startsWith('/ggo/state/')) {
+			// Reset the timer for checking packet arrival
+			if (this.stateUpdateTimer) {
+				clearInterval(this.stateUpdateTimer)
+				this.stateUpdateTimer = null
+			}
 			let variableName = this.parsePathToVariable(oscMsg)
 			if (variableName in this.companionVariables) {
 				let isFlooding = oscMsg.address.includes('level') || oscMsg.address.includes('gain')
@@ -107,19 +124,39 @@ class OscModule extends EventEmitter {
 	}
 
 	updateVariableValues(updates) {
-		// Apply updates in bulk
-		this.module.setVariableValues(updates)
-		// Update local variables' values
-		for (let [variableName, value] of Object.entries(updates)) {
-			// Restore the structure of companionVariables
-			this.companionVariables[variableName] = {
-				name: this.companionVariables[variableName].name,
-				value: value,
-			}
+		const updatedVariables = {}
+		let count = 0 // Counter to keep track of the number of variables updated
 
-			this.emit('variableUpdated', variableName, value)
+		// Iterate over the updates
+		for (let [variableName, value] of Object.entries(updates)) {
+			// Check if variable exists and if its value has changed
+			if (this.companionVariables.hasOwnProperty(variableName) && this.companionVariables[variableName] !== value) {
+				// Store updates for variables whose values have changed
+				updatedVariables[variableName] = value
+
+				// Update local variable's value
+				this.companionVariables[variableName] = {
+					name: this.companionVariables[variableName].name,
+					value: value,
+				}
+
+				// Emit an event for the updated variable
+				this.emit('variableUpdated', variableName, value)
+
+				// Increment the counter
+				count++
+			}
 		}
-		this.module.log('debug', `OSC Manager: Received updates for ${Object.keys(updates).length} variables`)
+
+		// Apply the updates
+		if (Object.keys(updatedVariables).length > 0) {
+			this.module.setVariableValues(updatedVariables)
+		}
+
+		// Log the number of variables updated
+		if (count > 0) {
+			this.module.log('debug', `OSC Manager: Updated values of ${count} variables`)
+		}
 	}
 
 	sendCommand(cmd, value) {
@@ -130,21 +167,38 @@ class OscModule extends EventEmitter {
 		})
 		this.module.log(
 			'debug',
-			`OSC Manager: Sent command to ${this.config.host}:${this.config.port}/ggo/cmd/${cmd}: ${value}`
+			`OSC Manager: Sent command to /ggo/cmd/${cmd} (${this.config.host}:${this.config.port}): ${value}`
 		)
 	}
 
 	requestStateUpdate() {
 		if (this.oscClient) {
-			// Request state update from Green-GO device
-			this.oscClient.send({
-				address: '/ggo/state/update',
-				args: [{ type: 'i', value: 1 }],
-			})
-			this.module.log('debug', `OSC Manager: Requested state update from ${this.config.host}`)
+			const sendUpdateRequest = () => {
+				// Request state update from Green-GO device
+				this.sendCommand('update', 1)
+				if (this.stateUpdateTimer) {
+					this.module.log('debug', `OSC Manager: No updates received, requesting new update from ${this.config.host}`)
+				} else {
+					this.module.log('debug', `OSC Manager: Requested state update from ${this.config.host}`)
+				}
+			}
+
+			// Send initial update request
+			sendUpdateRequest()
+
+			// Start the timer for requesting updates every 10 seconds
+			this.stateUpdateTimer = setInterval(sendUpdateRequest, 30000)
 		} else {
 			this.module.log('debug', `OSC Manager: OSC client not initialized, cannot request update`)
 		}
+	}
+
+	handleHeartbeat() {
+		// Set the heartbeat variable to 0
+		this.updateVariableValues({ state_heartbeat: 0 })
+
+		// Log a warning or error
+		this.module.log('warn', `OSC Manager: Heartbeat lost`)
 	}
 
 	async close() {

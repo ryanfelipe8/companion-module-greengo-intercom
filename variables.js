@@ -25,7 +25,7 @@ module.exports = function (module = {}) {
 			]
 			channelVariables.forEach(addVariable)
 		}
-		// Define user specific variables
+		// Define user or device specific variables
 		const deviceVariables = [
 			{ variableId: 'state_audio_gain', name: 'Input Gain State' },
 			{ variableId: 'state_mode_isolate', name: 'Isolate State' },
@@ -34,6 +34,7 @@ module.exports = function (module = {}) {
 			{ variableId: 'state_level_direct', name: 'Direct Channel Level' },
 			{ variableId: 'state_level_announce', name: 'Announce Level' },
 			{ variableId: 'state_level_emergency', name: 'Emergency Level' },
+			{ variableId: 'state_heartbeat', name: 'Device Network Connection' },
 		]
 		deviceVariables.forEach(addVariable)
 		// MCXD specific variables
