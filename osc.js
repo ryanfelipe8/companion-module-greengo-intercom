@@ -1,31 +1,29 @@
 const osc = require('osc')
 const EventEmitter = require('events')
 
+// The OSC Manager handles all communication and variable updates
 class OscModule extends EventEmitter {
 	constructor(module) {
 		super()
 		this.module = module
 		this.oscServer = null
 		this.oscClient = null
-		this.generalUpdateTimer = null
-		this.updateTimers = {}
-		this.updateQueue = []
-		this.latestValues = {}
+		this.updatesCollector = new VariableUpdatesCollector(this.updateVariableValues.bind(this))
 	}
 
 	init(config, companionVariables) {
 		this.companionVariables = companionVariables
 		if (!this.companionVariables) {
-			this.module.log('warn', `OSC Module: No variables defined`)
+			this.module.log('warn', `OSC Manager: No variables defined`)
 		}
 		this.config = config
 		// Ensure config is initialized
 		if (!this.config) {
-			this.module.log('error', `OSC Module: Config not initialized`)
+			this.module.log('error', `OSC Manager: Config not initialized`)
 			return
 		}
 		if (this.oscServer || this.oscClient) {
-			this.module.log('debug', 'OSC Module: Running instance found, restarting the OSC listeners')
+			this.module.log('debug', 'OSC Manager: Running instance found, restarting the OSC listeners')
 			this.closeOSCListeners()
 		}
 
@@ -52,15 +50,6 @@ class OscModule extends EventEmitter {
 		// Open the OSC port
 		this.oscServer.open()
 		this.oscClient.open()
-
-		this.module.log(
-			'info',
-			'OSC initialized, using configuration: ' +
-				JSON.stringify({
-					host: this.config.host,
-					port: this.config.port,
-				})
-		)
 	}
 
 	// Helper function to close existing connections
@@ -68,10 +57,12 @@ class OscModule extends EventEmitter {
 		if (this.oscServer) {
 			this.oscServer.close()
 			this.oscServer = null
+			this.module.log('debug', 'OSC Manager: Closed OSC server')
 		}
 		if (this.oscClient) {
 			this.oscClient.close()
 			this.oscClient = null
+			this.module.log('debug', 'OSC Manager: Closed OSC client')
 		}
 	}
 
@@ -80,38 +71,17 @@ class OscModule extends EventEmitter {
 		if (oscMsg.address === '/ggo/state/update') {
 			return
 		}
-		// this.module.log('debug', `OSC Module: Received message for ${oscMsg.address}: ${JSON.stringify(oscMsg.args)}`)
+		// this.module.log('debug', `OSC Manager: Received message for ${oscMsg.address}: ${JSON.stringify(oscMsg.args)}`)
 		// Handle command and state messages
 		if (oscMsg.address.startsWith('/ggo/state/')) {
-			// Parse message and update variables as needed
 			let variableName = this.parsePathToVariable(oscMsg)
 			if (variableName in this.companionVariables) {
-				// Set individual timers for paths containing "level" or "gain"
-				if (oscMsg.address.includes('level') || oscMsg.address.includes('gain')) {
-					let delay = 350
-					if (!this.updateTimers[variableName]) {
-						this.updateTimers[variableName] = setTimeout(() => {
-							this.updateVariableValue(variableName, this.latestValues[variableName])
-							delete this.updateTimers[variableName]
-						}, delay)
-					}
-					// Update the latest value for this variable
-					this.latestValues[variableName] = oscMsg.args[0].value
-				} else {
-					this.updateQueue.push({ variableName, value: oscMsg.args[0].value })
-					let delay = 3
-					clearTimeout(this.generalUpdateTimer)
-					this.generalUpdateTimer = setTimeout(() => {
-						while (this.updateQueue.length) {
-							const update = this.updateQueue.pop()
-							this.updateVariableValue(update.variableName, update.value)
-						}
-					}, delay)
-				}
+				let isFlooding = oscMsg.address.includes('level') || oscMsg.address.includes('gain')
+				this.updatesCollector.collect(variableName, oscMsg.args[0].value, isFlooding)
 			} else {
 				this.module.log(
 					'warn',
-					`OSC Module: Received message using usupported path. Generated variable ${variableName} not found`
+					`OSC Manager: Received message using unsupported path (${oscMsg.address}). Generated variable "${variableName}" not found`
 				)
 			}
 		}
@@ -132,22 +102,24 @@ class OscModule extends EventEmitter {
 			// Append "_ch+ID" to the variable name
 			variableName += '_ch' + oscMsg.args[1].value
 		}
-		// this.module.log('debug', `OSC Module: Returning variable ${variableName} extracted from ${oscMsg.address}`)
+		// this.module.log('debug', `OSC Manager: Returning variable ${variableName} extracted from ${oscMsg.address}`)
 		return variableName
 	}
 
-	updateVariableValue(variableName, value) {
-		// Check if the value is the same as the current one and return if true
-		if (this.companionVariables[variableName] === value) {
-			return
+	updateVariableValues(updates) {
+		// Apply updates in bulk
+		this.module.setVariableValues(updates)
+		// Update local variables' values
+		for (let [variableName, value] of Object.entries(updates)) {
+			// Restore the structure of companionVariables
+			this.companionVariables[variableName] = {
+				name: this.companionVariables[variableName].name,
+				value: value,
+			}
+
+			this.emit('variableUpdated', variableName, value)
 		}
-
-		// If the value is different, update the Companion variable and the local variable's value
-		this.module.setVariableValues({ [variableName]: value })
-		this.companionVariables[variableName] = value
-
-		this.emit('variableUpdated', variableName, value)
-		this.module.log('debug', `OSC Module: Updated variable ${variableName} to value ${value}`)
+		this.module.log('debug', `OSC Manager: Updated values of ${Object.keys(updates).length} variables`)
 	}
 
 	sendCommand(cmd, value) {
@@ -158,7 +130,7 @@ class OscModule extends EventEmitter {
 		})
 		this.module.log(
 			'debug',
-			`OSC Module: Sent command to ${this.config.host}:${this.config.port}/ggo/cmd/${cmd}: ${value}`
+			`OSC Manager: Sent command to ${this.config.host}:${this.config.port}/ggo/cmd/${cmd}: ${value}`
 		)
 	}
 
@@ -169,9 +141,9 @@ class OscModule extends EventEmitter {
 				address: '/ggo/state/update',
 				args: [{ type: 'i', value: 1 }],
 			})
-			this.module.log('debug', `OSC Module: Requested state update from ${this.config.host}`)
+			this.module.log('debug', `OSC Manager: Requested state update from ${this.config.host}`)
 		} else {
-			this.module.log('debug', `OSC Module: OSC client not initialized, cannot request state update`)
+			this.module.log('debug', `OSC Manager: OSC client not initialized, cannot request state update`)
 		}
 	}
 
@@ -181,11 +153,54 @@ class OscModule extends EventEmitter {
 
 	onError(error) {
 		// Log errors
-		this.module.log('error', `OSC Module: ${error.message}`)
+		this.module.log('error', `OSC Manager: ${error.message}`)
 	}
 
 	destroy() {
 		this.closeOSCListeners()
+	}
+}
+
+// Class to handle variable updates and manage timers
+class VariableUpdatesCollector {
+	constructor(updateVariableValueCallback) {
+		this.updateVariableValueCallback = updateVariableValueCallback
+		this.updateQueue = new Map()
+		this.levelQueue = new Map()
+		this.timer = null
+		this.levelTimer = null
+	}
+
+	collect(variableName, value, isFlooding = false) {
+		if (isFlooding) {
+			this.levelQueue.set(variableName, value)
+			if (!this.levelTimer) {
+				this.levelTimer = setTimeout(this.flushFloodingUpdates.bind(this), 350)
+			}
+		} else {
+			this.updateQueue.set(variableName, value)
+			if (this.timer) clearTimeout(this.timer)
+			this.timer = setTimeout(this.flushUpdates.bind(this), 3)
+		}
+	}
+
+	flushUpdates() {
+		this.flushQueue(this.updateQueue)
+		this.timer = null
+	}
+
+	flushFloodingUpdates() {
+		this.flushQueue(this.levelQueue)
+		this.levelTimer = null
+	}
+
+	flushQueue(queue) {
+		let updates = {}
+		for (let [variableName, value] of queue.entries()) {
+			updates[variableName] = value
+		}
+		this.updateVariableValueCallback(updates)
+		queue.clear()
 	}
 }
 
