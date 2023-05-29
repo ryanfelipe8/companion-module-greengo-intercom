@@ -159,15 +159,23 @@ class OscModule extends EventEmitter {
 		}
 	}
 
-	sendCommand(cmd, value) {
+	sendCommand(cmd, values) {
+		// Normalize `values` to always be an array
+		if (!Array.isArray(values)) {
+			values = [values]
+		}
+
+		// Prepare the arguments
+		const args = values.map((value) => ({ type: 'i', value }))
+
 		// Send command to Green-GO device
 		this.oscClient.send({
 			address: '/ggo/cmd/' + cmd,
-			args: [{ type: 'i', value: value }],
+			args: args,
 		})
 		this.module.log(
 			'debug',
-			`OSC Manager: Sent command to /ggo/cmd/${cmd} (${this.config.host}:${this.config.port}): ${value}`
+			`OSC Manager: Sent command to /ggo/cmd/${cmd} (${this.config.host}:${this.config.port}): ${values.join(', ')}`
 		)
 	}
 
