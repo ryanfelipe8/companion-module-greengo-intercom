@@ -13,7 +13,7 @@ module.exports = function (module = {}) {
 			}
 		}
 		// Generate variables for channels
-		for (let i = 1; i <= 12; i++) {
+		for (let i = 1; i <= module.config.channels; i++) {
 			const channelVariables = [
 				{ variableId: `state_talk_ch${i}`, name: `Talk State (CH${i})` },
 				{ variableId: `state_call_ch${i}`, name: `Call State (CH${i})` },
@@ -74,7 +74,7 @@ module.exports = function (module = {}) {
 	defineVariables()
 	setInitialValues()
 
-	module.log('debug', 'Variables: Resetted all variables')
+	module.log('debug', `Variables: Initialized all variables for ${module.config.channels} channels`)
 
 	return {
 		companionVariables,

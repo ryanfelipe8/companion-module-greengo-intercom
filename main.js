@@ -47,8 +47,8 @@ class GreenGoModule extends InstanceBase {
 			const value = this.companionVariables[variableName].value
 			if (value == -99 || value == -1) {
 				// Initiate update request
+				this.log('info', `Main: Found variable (${variableName}) using a default value (${value}), requesting update`)
 				this.osc.requestStateUpdate()
-				this.log('info', `Main: Found variable(s) using intial values: "${variableName}", requested update`)
 				// Break loop after first match to avoid sending multiple requests
 				break
 			}
@@ -103,21 +103,27 @@ class GreenGoModule extends InstanceBase {
 	}
 
 	async configUpdated(config) {
-		this.log('info', 'Main: Config reload detected')
 		// Recording previous configuration
 		const oldConfig = this.config
 		this.config = config
 		// Re-initialize variables
-		if (oldConfig.deviceType !== this.config.deviceType) {
+		if (oldConfig.deviceType !== this.config.deviceType || oldConfig.channels !== this.config.channels) {
+			if (oldConfig.deviceType !== this.config.deviceType) {
+				this.log('info', 'Main: Configuration change detected (device type), resetting all variables')
+			} else {
+				this.log('info', 'Main: Configuration change detected (channel count), resetting all variables')
+			}
 			let variablesModule = UpdateVariableDefinitions(this)
 			this.companionVariables = variablesModule.companionVariables
 			if (this.companionVariables.state_channel_talk_ch1 == undefined) {
-				this.log('warning', 'Main: Re-initialization of variables failed')
+				this.log('warning', 'Main: Initialization of variables failed')
 			}
+			await this.initializeOsc()
 		}
 		// Reinitialize OSC if the configuration has been updated
 		if (oldConfig.host !== this.config.host || oldConfig.port !== this.config.port) {
 			{
+				this.log('info', 'Main: Configuration change detected (IP address or port), restarting OSC Manger.')
 				await this.initializeOsc()
 			}
 		}
@@ -131,16 +137,18 @@ class GreenGoModule extends InstanceBase {
 			{
 				type: 'textinput',
 				id: 'host',
-				label: 'Target IP',
+				label: 'Device IP',
 				width: 8,
+				required: true,
 				regex: Regex.IP,
 				tooltip: 'Select the IPv4 address your Green-GO device is using.',
 			},
 			{
 				type: 'textinput',
 				id: 'port',
-				label: 'Target Port',
+				label: 'Script Port',
 				width: 4,
+				required: true,
 				regex: Regex.PORT,
 				tooltip: 'Select the port the Green-GO "osc-remote" script is using.',
 			},
@@ -148,6 +156,9 @@ class GreenGoModule extends InstanceBase {
 				type: 'dropdown',
 				id: 'deviceType',
 				label: 'Device Type',
+				width: 8,
+				required: true,
+				default: 1,
 				choices: [
 					{ id: 1, label: 'BPX' },
 					{ id: 2, label: 'MCX(D)' },
@@ -156,8 +167,20 @@ class GreenGoModule extends InstanceBase {
 					{ id: 5, label: 'Si2WR/Si4WR' },
 					{ id: 6, label: 'INTX' },
 				],
-				tooltip: 'Select the type of Green-GO device you are connecting to',
-				minChoicesForSearch: 1, // make the dropdown searchable
+				minChoicesForSearch: 0,
+				tooltip: 'Select the type of Green-GO device you are connecting to.',
+			},
+			{
+				type: 'number',
+				id: 'channels',
+				label: 'Channel Count',
+				width: 4,
+				required: true,
+				default: 6,
+				min: 1,
+				max: 32,
+				regex: Regex.number,
+				tooltip: 'Define the amount of channels to control (1 - 32) via this module.',
 			},
 		]
 	}

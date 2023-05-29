@@ -119,7 +119,7 @@ class OscModule extends EventEmitter {
 
 			this.emit('variableUpdated', variableName, value)
 		}
-		this.module.log('debug', `OSC Manager: Updated values of ${Object.keys(updates).length} variables`)
+		this.module.log('debug', `OSC Manager: Received updates for ${Object.keys(updates).length} variables`)
 	}
 
 	sendCommand(cmd, value) {
@@ -143,7 +143,7 @@ class OscModule extends EventEmitter {
 			})
 			this.module.log('debug', `OSC Manager: Requested state update from ${this.config.host}`)
 		} else {
-			this.module.log('debug', `OSC Manager: OSC client not initialized, cannot request state update`)
+			this.module.log('debug', `OSC Manager: OSC client not initialized, cannot request update`)
 		}
 	}
 
