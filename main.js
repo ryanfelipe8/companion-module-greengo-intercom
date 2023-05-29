@@ -54,11 +54,10 @@ class GreenGoModule extends InstanceBase {
 			}
 		}
 	}
-
 	async init(config) {
 		this.config = config
 		// Initialize the variables
-		let variablesModule = UpdateVariableDefinitions(this)
+		const variablesModule = UpdateVariableDefinitions(this)
 		this.companionVariables = variablesModule.companionVariables
 		if (this.companionVariables.state_channel_talk_ch1 == undefined) {
 			this.log('warning', 'Main: Definitions are empty')
@@ -113,7 +112,7 @@ class GreenGoModule extends InstanceBase {
 			} else {
 				this.log('info', 'Main: Configuration change detected (channel count), resetting all variables')
 			}
-			let variablesModule = UpdateVariableDefinitions(this)
+			const variablesModule = UpdateVariableDefinitions(this)
 			this.companionVariables = variablesModule.companionVariables
 			if (this.companionVariables.state_channel_talk_ch1 == undefined) {
 				this.log('warning', 'Main: Initialization of variables failed')
