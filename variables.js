@@ -1,15 +1,15 @@
-module.exports = function (module, existingVariables = {}) {
-	let companionVariables = { ...existingVariables }
+module.exports = function (module = {}) {
+	let companionVariables = {}
+
 	function defineVariables() {
 		function addVariable(variable) {
-			// module.log('info', `Checking a variable: ${JSON.stringify(variable)} it it is missing`)
 			if (companionVariables[variable.variableId] == undefined) {
 				const initialValue = variable.variableId.includes('level') || variable.variableId.includes('gain') ? -99 : -1
 				companionVariables[variable.variableId] = {
 					name: variable.name,
 					value: initialValue,
 				}
-				module.log('debug', `Variable ${variable.variableId} not found: Defining and initializing it now`)
+				// module.log('debug', `Variables: Crated and initialized variable ${variable.variableId}`)
 			}
 		}
 		// Generate variables for channels
@@ -71,31 +71,10 @@ module.exports = function (module, existingVariables = {}) {
 		module.setVariableValues(variableValues)
 	}
 
-	function deleteUnusedVariables() {
-		// Get the current device type
-		const deviceType = module.config.deviceType
-
-		// Iterate over each variable in companionVariables
-		for (const variableId in companionVariables) {
-			// If the variable name is specific to a device type and doesn't match the current one, delete it
-			if (
-				(companionVariables[variableId].name.includes('MCX') && deviceType != '2') ||
-				(companionVariables[variableId].name.includes('WPX') && deviceType != '3')
-			) {
-				delete companionVariables[variableId]
-				module.log(
-					'debug',
-					`Removed variable ${companionVariables.variableId} as it is not in use by the current device type`
-				)
-			}
-		}
-	}
-
-	deleteUnusedVariables()
 	defineVariables()
 	setInitialValues()
 
-	module.log('info', JSON.stringify(companionVariables.state_channel_talk_ch1))
+	module.log('debug', 'Variables: Resetted all variables')
 
 	return {
 		companionVariables,
