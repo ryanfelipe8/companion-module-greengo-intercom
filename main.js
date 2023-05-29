@@ -181,6 +181,14 @@ class GreenGoModule extends InstanceBase {
 				regex: Regex.number,
 				tooltip: 'Define the amount of channels to control (1 - 32) via this module.',
 			},
+			{
+				type: 'static-text',
+				id: 'info',
+				width: 12,
+				label: 'Important Notice',
+				value:
+					'Before using the Green-GO module for Bitfocus Companion, make sure to load the "osc-remote.gg5t" script file onto your Green-GO device. This plugin will not function without that script running!<br><br>If you have any questions, please consult our <a href="https://companion.greengo.digital">documentation</a> for further details or contact our <a href="https://companion.greengo.digital">community</a>.',
+			},
 		]
 	}
 
