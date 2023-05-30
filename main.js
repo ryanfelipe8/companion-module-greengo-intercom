@@ -8,14 +8,13 @@ const OSCServer = require('./osc')
 class GreenGoModule extends InstanceBase {
 	constructor(internal) {
 		super(internal)
-
-		// Initialize OSC Server
-		this.osc = new OSCServer(this)
 	}
 
+	// Async function to initialize the OSC server and client
 	async initializeOsc() {
 		if (this.config.host && this.config.port) {
 			try {
+				// Passing companionVariables
 				await this.osc.init(this.config, this.companionVariables)
 
 				this.log(
@@ -37,10 +36,10 @@ class GreenGoModule extends InstanceBase {
 				)
 				this.updateStatus(InstanceStatus.Warning)
 			}
-			this.updateStatus(InstanceStatus.Ok)
 		}
 	}
 
+	// Async function to check all variables for default variables. If one is found, a state request is issued
 	async updateVariables() {
 		// Check each variable for the default values
 		for (const variableName of Object.keys(this.companionVariables)) {
@@ -55,18 +54,21 @@ class GreenGoModule extends InstanceBase {
 		}
 	}
 	async init(config) {
+		// Initialize Config
 		this.config = config
+		// Initialize OSC Server
+		this.osc = new OSCServer(this)
 		// Initialize the variables
 		const variablesModule = UpdateVariableDefinitions(this)
+		// Mount internal variables & check a value
 		this.companionVariables = variablesModule.companionVariables
 		if (this.companionVariables.state_channel_talk_ch1 == undefined) {
 			this.log('warning', 'Main: Definitions are empty')
 		}
 
-		// Initialize OSC
 		await this.initializeOsc()
 
-		// Listen for the variableUpdated event
+		// Listen for the variableUpdated emit function from updateVariableValues
 		this.osc.on('variableUpdated', (variableName, value) => {
 			if (this.companionVariables[variableName]) {
 				this.companionVariables[variableName].value = value
@@ -82,18 +84,17 @@ class GreenGoModule extends InstanceBase {
 		})
 		this.updateStatus(InstanceStatus.Ok)
 
-		// Update variable values
 		await this.updateVariables()
 
 		this.updateActions()
 		//this.updateFeedbacks() // export feedbacks
 	}
 
-	// When module gets deleted
+	// Destroy when module gets deleted
 	async destroy() {
 		this.log('debug', 'Main: Issued destroy command')
 
-		// If OSC has been initialized, try to close the OSC connection
+		// OSC destroy
 		if (this.osc) {
 			this.osc.destroy()
 			delete this.osc
@@ -105,7 +106,7 @@ class GreenGoModule extends InstanceBase {
 		// Recording previous configuration
 		const oldConfig = this.config
 		this.config = config
-		// Re-initialize variables
+		// Re-initialize variables if module configuration has been updated (deviceType or channels)
 		if (oldConfig.deviceType !== this.config.deviceType || oldConfig.channels !== this.config.channels) {
 			if (oldConfig.deviceType !== this.config.deviceType) {
 				this.log('info', 'Main: Configuration change detected (device type), resetting all variables')
@@ -119,14 +120,13 @@ class GreenGoModule extends InstanceBase {
 			}
 			await this.initializeOsc()
 		}
-		// Reinitialize OSC if the configuration has been updated
+		// Re-initialize OSC if the configuration has been updated (host or port)
 		if (oldConfig.host !== this.config.host || oldConfig.port !== this.config.port) {
 			{
 				this.log('info', 'Main: Configuration change detected (IP address or port), restarting OSC Manger.')
 				await this.initializeOsc()
 			}
 		}
-		// Update variable values
 		await this.updateVariables()
 	}
 
