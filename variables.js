@@ -32,27 +32,27 @@ module.exports = function (module = {}) {
 			{ variableId: 'state_level_main', name: 'Main Level' },
 			{ variableId: 'state_level_pgm', name: 'PGM Level' },
 			{ variableId: 'state_level_direct', name: 'Direct Channel Level' },
-			{ variableId: 'state_level_announce', name: 'Announce Level' },
-			{ variableId: 'state_level_emergency', name: 'Emergency Level' },
-			{ variableId: 'state_heartbeat', name: 'Device Network Connection' },
+			{ variableId: 'state_heartbeat', name: 'Device Online State' },
 		]
 		deviceVariables.forEach(addVariable)
-		// MCXD specific variables
-		if (module.config.deviceType == '2') {
+		// MCX(D) specific variables
+		if (module.config.deviceType == 'MCX') {
 			const mcxVariables = [
-				{ variableId: 'state_level_headset', name: 'Headset Level (MCX)' },
-				{ variableId: 'state_level_lineout', name: 'Line-Out Level (MCX)' },
-				{ variableId: 'state_level_speaker', name: 'Speaker Level (MCX)' },
-				{ variableId: 'state_mode_screen', name: 'Screen Mode (MCX)' },
+				// Temp. disabled
+				// { variableId: 'state_level_headset', name: 'Headset Level (MCX)' },
+				// { variableId: 'state_level_lineout', name: 'Line-Out Level (MCX)' },
+				// { variableId: 'state_level_speaker', name: 'Speaker Level (MCX)' },
+				// { variableId: 'state_mode_screen', name: 'Screen Mode (MCX)' },
 			]
 			mcxVariables.forEach(addVariable)
 		}
 		// WPX specific variables
-		if (module.config.deviceType == '3') {
+		if (module.config.deviceType == 'WPX') {
 			const wpxVariables = [
-				{ variableId: 'state_level_headset', name: 'Headset Level (WPX)' },
-				{ variableId: 'state_level_speaker', name: 'Speaker Level (WPX)' },
-				{ variableId: 'state_mode_screen', name: 'Screen Mode (WPX)' },
+				// Temp. disabled
+				// { variableId: 'state_level_headset', name: 'Headset Level (WPX)' },
+				// { variableId: 'state_level_speaker', name: 'Speaker Level (WPX)' },
+				// { variableId: 'state_mode_screen', name: 'Screen Mode (WPX)' },
 			]
 			wpxVariables.forEach(addVariable)
 		}
