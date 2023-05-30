@@ -1,0 +1,138 @@
+// This script enables basic control and status reporting by using the OSC message protocol.
+
+// Define the IPv4 address and UDP port of the remote host
+var remoteIP = "10.0.10.255"
+var remotePort = 8000
+
+// Setup OSC client and server
+osc.open(remotePort)
+osc.destination(remoteIP,remotePort)
+
+// Event listener for remotely triggering state updates
+event osc.receive["/ggo/cmd/update"]
+    for chId = 1 to 6
+        osc.send("/ggo/state/channel/talk",channel.talk[chId],chId)
+        osc.send("/ggo/state/channel/call",channel.call[chId],chId)
+        osc.send("/ggo/state/channel/cue",channel.cue[chId],chId)
+        osc.send("/ggo/state/channel/listen",channel.listen[chId],chId)
+        osc.send("/ggo/state/channel/level",channel.level[chId],chId)
+        osc.send("/ggo/state/channel/input/vox",channel.input.status[chId],chId)
+        osc.send("/ggo/state/channel/input/call",channel.input.call[chId],chId)
+    end
+    osc.send("/ggo/state/level/main",audio.main.level)
+    osc.send("/ggo/state/level/pgm",special.program.level)
+    osc.send("/ggo/state/level/direct",special.direct.level)
+    osc.send("/ggo/state/audio/gain",audio.gain)
+    osc.send("/ggo/state/mode/isolate",settings.isolate)
+    osc.send("/ggo/state/updated",1)
+end
+
+event timer[1]
+    osc.send("/ggo/state/heartbeat",1)
+    timer[1] = 3000
+end
+timer[1] = 3000
+
+// Sending states via OSC message to defined remote host
+// All channel related commands have a second argument defining the channel ID
+// Event listeners for channel states & configurations
+for chId = 1 to 6
+    event channel.talk[chId]
+        osc.send("/ggo/state/channel/talk",channel.talk[event.index],event.index)
+    end
+    event channel.cue[chId]
+        osc.send("/ggo/state/channel/cue",channel.cue[event.index],event.index)
+    end
+    event channel.call[chId]
+        osc.send("/ggo/state/channel/call",channel.call[event.index],event.index)
+    end
+    event channel.listen[chId]
+        osc.send("/ggo/state/channel/listen",channel.listen[event.index],event.index)
+    end
+    event channel.level[chId]
+        osc.send("/ggo/state/channel/level",channel.level[event.index],event.index)
+    end
+    event channel.input.call[chId]
+        osc.send("/ggo/state/channel/input/call",channel.input.call[event.index],event.index)
+    end
+    event channel.input.status[chId]
+        osc.send("/ggo/state/channel/input/vox",channel.input.status[event.index],event.index)
+    end
+end
+
+// Event listeners for general levels & modes
+event audio.main.level
+    osc.send("/ggo/state/level/main",audio.main.level)
+end
+event special.program.level
+    osc.send("/ggo/state/level/pgm",special.program.level)
+end
+event special.direct.level
+    osc.send("/ggo/state/level/pgm",special.direct.level)
+end
+event audio.gain
+    osc.send("/ggo/state/audio/gain",audio.gain)
+end
+event settings.isolate
+    osc.send("/ggo/state/mode/isolate",settings.isolate)
+end
+
+// Event listeners for receiving commands via OSC messages
+// All channel related commands have a second argument defining the channel ID
+event osc.receive["/ggo/cmd/channel/talk"]
+    for chId = 1 to 6
+        if osc.read(2) == chId
+            channel.talk[chId] = osc.read(1)
+        end
+    end
+end
+event osc.receive["/ggo/cmd/channel/call"]
+    for chId = 1 to 6
+        if osc.read(2) == chId
+            channel.call[chId] = osc.read(1)
+        end
+    end
+end
+event osc.receive["/ggo/cmd/channel/cue"]
+    for chId = 1 to 6
+        if osc.read(2) == chId
+            channel.cue[chId] = osc.read(1)
+        end
+    end
+end
+event osc.receive["/ggo/cmd/channel/listen"]
+    for chId = 1 to 6
+        if osc.read(2) == chId
+            channel.listen[chId] = osc.read(1)
+        end
+    end
+end
+event osc.receive["/ggo/cmd/channel/level"]
+    for chId = 1 to 6
+        if osc.read(2) == chId
+            channel.level[chId] = osc.read(1)
+        end
+    end
+end
+
+// Event listeners for general levels & modes
+event osc.receive["/ggo/cmd/level/main"]
+    audio.main.level = osc.read(1)
+end
+event osc.receive["/ggo/cmd/level/pgm"]
+    special.program.level = osc.read(1)
+end
+event osc.receive["/ggo/cmd/level/direct"]
+    special.direct.level = osc.read(1)
+end
+event osc.receive["/ggo/cmd/audio/gain"]
+    audio.gain = osc.read(1)
+end
+event osc.receive["/ggo/cmd/mode/isolate"]
+    settings.isolate = osc.read(1)
+end
+
+// Event listener for identify
+event osc.receive["/ggo/cmd/identify"]
+    settings.identify = osc.read(1)
+end
