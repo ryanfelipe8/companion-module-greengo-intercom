@@ -41,7 +41,7 @@ module.exports = function (self) {
 			],
 			callback: (action) => {
 				let opt = action.options
-				let cmd = 'channel/talk'
+				const cmd = 'channel/talk'
 				if (opt.cycle) {
 					// Get the variable name based on the channel ID
 					let variableName = 'state_talk_ch' + opt.chId
@@ -53,7 +53,7 @@ module.exports = function (self) {
 						let newValue = currentValue === 0 ? 2 : 0
 						self.osc.sendCommand(cmd, [newValue, opt.chId])
 					} else {
-						self.log('error', `Could not cycle state because variable ${variableName} does not exist.`)
+						self.log('error', `Actions: Could not cycle state because variable ${variableName} does not exist.`)
 					}
 				} else {
 					self.osc.sendCommand(cmd, [opt.talkState, opt.chId])
@@ -89,7 +89,7 @@ module.exports = function (self) {
 			],
 			callback: (action) => {
 				let opt = action.options
-				let cmd = 'channel/call'
+				const cmd = 'channel/call'
 
 				self.osc.sendCommand(cmd, [opt.callType, opt.chId])
 			},
@@ -136,7 +136,7 @@ module.exports = function (self) {
 			],
 			callback: async (action) => {
 				let opt = action.options
-				let cmd = 'channel/cue'
+				const cmd = 'channel/cue'
 				if (opt.cycle) {
 					// Get the variable name based on the channel ID
 					let variableName = 'state_cue_ch' + opt.chId
@@ -154,7 +154,7 @@ module.exports = function (self) {
 						let newValue = cyclePattern[index]
 						self.osc.sendCommand(cmd, [newValue, opt.chId])
 					} else {
-						self.log('error', `Could not cycle state because variable ${variableName} does not exist.`)
+						self.log('error', `Actions: Could not cycle state because variable ${variableName} does not exist.`)
 					}
 				} else {
 					self.osc.sendCommand(cmd, [opt.cueType, opt.chId])
@@ -201,7 +201,7 @@ module.exports = function (self) {
 			],
 			callback: (action) => {
 				let opt = action.options
-				let cmd = 'channel/listen'
+				const cmd = 'channel/listen'
 				if (opt.cycle) {
 					// Get the variable name based on the channel ID
 					let variableName = 'state_listen_ch' + opt.chId
@@ -213,7 +213,7 @@ module.exports = function (self) {
 						let newValue = currentValue === 1 ? 0 : 1
 						self.osc.sendCommand(cmd, [newValue, opt.chId])
 					} else {
-						self.log('error', `Could not cycle state because variable ${variableName} does not exist.`)
+						self.log('error', `Actions: Could not cycle state because variable ${variableName} does not exist.`)
 					}
 				} else {
 					self.osc.sendCommand(cmd, [opt.listenState, opt.chId])
@@ -269,7 +269,7 @@ module.exports = function (self) {
 			],
 			callback: (action) => {
 				let opt = action.options
-				let cmd = 'channel/level'
+				const cmd = 'channel/level'
 				if (opt.cycle) {
 					// Get the variable name based on the channel ID
 					let variableName = 'state_level_ch' + opt.chId
@@ -290,7 +290,7 @@ module.exports = function (self) {
 						}
 						self.osc.sendCommand(cmd, [newValue, opt.chId])
 					} else {
-						self.log('error', `Could not cycle state because variable ${variableName} does not exist.`)
+						self.log('error', `Actions: Could not cycle state because variable ${variableName} does not exist.`)
 					}
 				} else {
 					self.osc.sendCommand(cmd, [opt.chLevel, opt.chId])
@@ -337,7 +337,7 @@ module.exports = function (self) {
 			],
 			callback: (action) => {
 				let opt = action.options
-				let cmd = 'level/direct'
+				const cmd = 'level/direct'
 				if (opt.cycle) {
 					// Get the variable name based on the channel ID
 					let variableName = 'state_level_direct'
@@ -358,7 +358,7 @@ module.exports = function (self) {
 						}
 						self.osc.sendCommand(cmd, [newValue])
 					} else {
-						self.log('error', `Could not cycle state because variable ${variableName} does not exist.`)
+						self.log('error', `Actions: Could not cycle state because variable ${variableName} does not exist.`)
 					}
 				} else {
 					self.osc.sendCommand(cmd, [opt.chLevel])
@@ -384,7 +384,7 @@ module.exports = function (self) {
 			],
 			callback: (action) => {
 				let opt = action.options
-				let cmd = 'identify'
+				const cmd = 'identify'
 				self.osc.sendCommand(cmd, [opt.identifyState])
 			},
 		},
@@ -425,7 +425,7 @@ module.exports = function (self) {
 			],
 			callback: (action) => {
 				let opt = action.options
-				let cmd = 'audio/gain'
+				const cmd = 'audio/gain'
 				if (opt.cycle) {
 					// Get the variable name based on the channel ID
 					let variableName = 'state_audio_gain'
@@ -443,7 +443,7 @@ module.exports = function (self) {
 						}
 						self.osc.sendCommand(cmd, [newValue])
 					} else {
-						self.log('error', `Could not cycle state because variable ${variableName} does not exist.`)
+						self.log('error', `Actions: Could not cycle state because variable ${variableName} does not exist.`)
 					}
 				} else {
 					self.osc.sendCommand(cmd, [gainLevel])
@@ -490,7 +490,7 @@ module.exports = function (self) {
 			],
 			callback: (action) => {
 				let opt = action.options
-				let cmd = 'level/main'
+				const cmd = 'level/main'
 				if (opt.cycle) {
 					// Get the variable name based on the channel ID
 					let variableName = 'state_level_main'
@@ -511,7 +511,7 @@ module.exports = function (self) {
 						}
 						self.osc.sendCommand(cmd, [newValue])
 					} else {
-						self.log('error', `Could not cycle state because variable ${variableName} does not exist.`)
+						self.log('error', `Actions: Could not cycle state because variable ${variableName} does not exist.`)
 					}
 				} else {
 					self.osc.sendCommand(cmd, [opt.mainLevel])
@@ -549,7 +549,7 @@ module.exports = function (self) {
 			],
 			callback: (action) => {
 				let opt = action.options
-				let cmd = 'mode/isolate'
+				const cmd = 'mode/isolate'
 				if (opt.cycle) {
 					// Get the variable name based on the channel ID
 					let variableName = 'state_mode_isolate'
@@ -561,7 +561,7 @@ module.exports = function (self) {
 						let newValue = currentValue === 1 ? 0 : 1
 						self.osc.sendCommand(cmd, [newValue, opt.chId])
 					} else {
-						self.log('error', `Could not cycle state because variable ${variableName} does not exist.`)
+						self.log('error', `Actions: Could not cycle state because variable ${variableName} does not exist.`)
 					}
 				} else {
 					self.osc.sendCommand(cmd, [opt.isolateState])
@@ -608,7 +608,7 @@ module.exports = function (self) {
 			],
 			callback: (action) => {
 				let opt = action.options
-				let cmd = 'level/pgm'
+				const cmd = 'level/pgm'
 				if (opt.cycle) {
 					// Get the variable name based on the channel ID
 					let variableName = 'state_level_pgm'
@@ -629,7 +629,7 @@ module.exports = function (self) {
 						}
 						self.osc.sendCommand(cmd, [newValue])
 					} else {
-						self.log('error', `Could not cycle state because variable ${variableName} does not exist.`)
+						self.log('error', `Actions: Could not cycle state because variable ${variableName} does not exist.`)
 					}
 				} else {
 					self.osc.sendCommand(cmd, [opt.pgmLevel])
