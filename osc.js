@@ -58,9 +58,6 @@ class OscModule extends EventEmitter {
 	onMessage(oscMsg) {
 		// Check if the message is a heartbeat
 		if (oscMsg.address === '/ggo/state/heartbeat') {
-			// Reset the heartbeat variable to 1
-			this.updateVariableValues({ state_heartbeat: 1 })
-
 			// If stateUpdateTimer is running, we should initialize another state update request
 			if (this.stateUpdateTimer) {
 				this.requestStateUpdate()
@@ -73,7 +70,6 @@ class OscModule extends EventEmitter {
 
 			// Start a new heartbeat timer and exit function
 			this.heartbeatTimer = setTimeout(() => this.handleHeartbeat(), 5000)
-			return
 		}
 		if (oscMsg.address === '/ggo/state/updated') {
 			// Clear the timer for requestStateUpdate() as we've received confirmation that updates have been sent
@@ -130,7 +126,10 @@ class OscModule extends EventEmitter {
 		// Iterate over the updates
 		for (let [variableName, value] of Object.entries(updates)) {
 			// Check if variable exists and if its value has changed
-			if (this.companionVariables.hasOwnProperty(variableName) && this.companionVariables[variableName] !== value) {
+			if (
+				this.companionVariables.hasOwnProperty(variableName) &&
+				this.companionVariables[variableName].value !== value
+			) {
 				// Store updates for variables whose values have changed
 				updatedVariables[variableName] = value
 
@@ -142,7 +141,6 @@ class OscModule extends EventEmitter {
 
 				// Emit an event for the updated variable
 				this.emit('variableUpdated', variableName, value)
-
 				// Increment the counter
 				count++
 			}
