@@ -1,6 +1,6 @@
 ### Green-GO Intercom OSC Remote
 
-This module currently enables you to remotely control the channels 1 - 4 of a user or device with the commands talk, call, cue, listen, and level. In addition you have access to things like the main and PGM level, the isolate mode and the gain level of the user's input.
+This Companion module currently enables you to remotely control the channels 1 - 4 of a user or device with channel commands listed below. There are also feedbacks and variables that allow you to customize your buttons found in the module's presets.
 
 Please visit [the documentation](https://companion.greengo.digital) to get more information about this Companion module.
 
