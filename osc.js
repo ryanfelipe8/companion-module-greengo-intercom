@@ -54,45 +54,43 @@ class OscModule extends EventEmitter {
 		this.oscClient.open()
 	}
 
-	// Helper function to close existing connections
-	closeOSCListeners() {
-		if (this.oscServer) {
-			this.oscServer.close()
-			this.oscServer = null
-			this.module.log('debug', 'OSC Manager: Closed OSC server')
-		}
-		if (this.oscClient) {
-			this.oscClient.close()
-			this.oscClient = null
-			this.module.log('debug', 'OSC Manager: Closed OSC client')
-		}
-	}
-
+	// Handle all incoming OSC messages
 	onMessage(oscMsg) {
 		// Check if the message is a heartbeat
 		if (oscMsg.address === '/ggo/state/heartbeat') {
 			// Reset the heartbeat variable to 1
 			this.updateVariableValues({ state_heartbeat: 1 })
 
+			// If stateUpdateTimer is running, we should initialize another state update request
+			if (this.stateUpdateTimer) {
+				this.requestStateUpdate()
+			}
+
 			// Clear the existing heartbeat timer if it exists
 			if (this.heartbeatTimer) {
 				clearTimeout(this.heartbeatTimer)
 			}
 
-			// Start a new heartbeat timer
-			this.heartbeatTimer = setTimeout(() => this.handleHeartbeat(), 5000)
+			// Start a new heartbeat timer and exit function
+			this.heartbeatTimer = setTimeout(() => this.handleHeartbeat(), 3030)
+			return
+		}
+		if (oscMsg.address === '/ggo/state/updated') {
+			// Clear the timer for requestStateUpdate() as we've received confirmation that updates have been sent
+			if (this.stateUpdateTimer) {
+				clearInterval(this.stateUpdateTimer)
+				this.stateUpdateTimer = null
+				this.module.log('info', 'OSC Manager: Received initial state updates from device')
+			}
 			return
 		}
 		// this.module.log('debug', `OSC Manager: Received message for ${oscMsg.address}: ${JSON.stringify(oscMsg.args)}`)
 		// Handle command and state messages
 		if (oscMsg.address.startsWith('/ggo/state/')) {
-			// Reset the timer for checking packet arrival
-			if (this.stateUpdateTimer) {
-				clearInterval(this.stateUpdateTimer)
-				this.stateUpdateTimer = null
-			}
 			let variableName = this.parsePathToVariable(oscMsg)
+			// Check if constructed variable name exists before handling the message
 			if (variableName in this.companionVariables) {
+				// Separate values that may create a message flood to treat them differently
 				let isFlooding = oscMsg.address.includes('level') || oscMsg.address.includes('gain')
 				this.updatesCollector.collect(variableName, oscMsg.args[0].value, isFlooding)
 			} else {
@@ -104,6 +102,7 @@ class OscModule extends EventEmitter {
 		}
 	}
 
+	// Construct variable name from OSC message path
 	parsePathToVariable(oscMsg) {
 		// Split the path into segments
 		let segments = oscMsg.address.split('/')
@@ -123,6 +122,7 @@ class OscModule extends EventEmitter {
 		return variableName
 	}
 
+	// Update variable values for Companion and internal uses
 	updateVariableValues(updates) {
 		const updatedVariables = {}
 		let count = 0 // Counter to keep track of the number of variables updated
@@ -159,13 +159,14 @@ class OscModule extends EventEmitter {
 		}
 	}
 
+	// OSC message sending helper function that only sends integer values as payload
 	sendCommand(cmd, values) {
-		// Normalize `values` to always be an array
+		// Normalize `values` to always be an array, this is needed to accept multiple values
 		if (!Array.isArray(values)) {
 			values = [values]
 		}
 
-		// Prepare the arguments
+		// Map values in array and prepare the arguments
 		const args = values.map((value) => ({ type: 'i', value }))
 
 		// Send command to Green-GO device
@@ -179,34 +180,50 @@ class OscModule extends EventEmitter {
 		)
 	}
 
+	// Request state update from Green-GO device. Runs as a timer to ensure we receive an update when the device comes online
 	requestStateUpdate() {
 		if (this.oscClient) {
 			const sendUpdateRequest = () => {
 				// Request state update from Green-GO device
 				this.sendCommand('update', 1)
-				if (this.stateUpdateTimer) {
-					this.module.log('debug', `OSC Manager: No updates received, requesting new update from ${this.config.host}`)
+				if (this.stateUpdateTimer && this.companionVariables['state_heartbeat'].value != 1) {
+					this.module.log('debug', `OSC Manager: No updates received, requested new update from ${this.config.host}`)
 				} else {
 					this.module.log('debug', `OSC Manager: Requested state update from ${this.config.host}`)
 				}
 			}
 
-			// Send initial update request
+			// Call helper function for update request
 			sendUpdateRequest()
 
-			// Start the timer for requesting updates every 10 seconds
+			// Start the timer for requesting updates every 30 seconds. Timer is cancelled if any state update is received
 			this.stateUpdateTimer = setInterval(sendUpdateRequest, 30000)
 		} else {
 			this.module.log('debug', `OSC Manager: OSC client not initialized, cannot request update`)
 		}
 	}
 
+	// Helper function to reset the heartbeat
 	handleHeartbeat() {
 		// Set the heartbeat variable to 0
 		this.updateVariableValues({ state_heartbeat: 0 })
 
 		// Log a warning or error
 		this.module.log('warn', `OSC Manager: Heartbeat lost`)
+	}
+
+	// Helper function to close existing connections
+	closeOSCListeners() {
+		if (this.oscServer) {
+			this.oscServer.close()
+			this.oscServer = null
+			this.module.log('debug', 'OSC Manager: Closed OSC server')
+		}
+		if (this.oscClient) {
+			this.oscClient.close()
+			this.oscClient = null
+			this.module.log('debug', 'OSC Manager: Closed OSC client')
+		}
 	}
 
 	async close() {
@@ -223,7 +240,7 @@ class OscModule extends EventEmitter {
 	}
 }
 
-// Class to handle variable updates and manage timers
+// Class to collect variable updates and manage timers
 class VariableUpdatesCollector {
 	constructor(updateVariableValueCallback) {
 		this.updateVariableValueCallback = updateVariableValueCallback
@@ -242,7 +259,7 @@ class VariableUpdatesCollector {
 		} else {
 			this.updateQueue.set(variableName, value)
 			if (this.timer) clearTimeout(this.timer)
-			this.timer = setTimeout(this.flushUpdates.bind(this), 3)
+			this.timer = setTimeout(this.flushUpdates.bind(this), 5)
 		}
 	}
 
