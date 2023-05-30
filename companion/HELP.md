@@ -33,4 +33,4 @@ Please visit [the documentation](https://companion.greengo.digital) to get more 
 | Check Main Level     | React to the current output level of the device                        |
 | Check Input Gain     | React to the current gain level of the device's active input           |
 | Check Isolate State  | React to the current isolate state of the device                       |
-| Online Heartbeat     | A device online state that gets refreshed every 3 seconds              |
+| Online Heartbeat     | A device online state that gets refreshed every 5 seconds              |

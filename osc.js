@@ -72,7 +72,7 @@ class OscModule extends EventEmitter {
 			}
 
 			// Start a new heartbeat timer and exit function
-			this.heartbeatTimer = setTimeout(() => this.handleHeartbeat(), 3030)
+			this.heartbeatTimer = setTimeout(() => this.handleHeartbeat(), 5000)
 			return
 		}
 		if (oscMsg.address === '/ggo/state/updated') {
