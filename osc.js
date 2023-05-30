@@ -149,6 +149,7 @@ class OscModule extends EventEmitter {
 		// Apply the updates
 		if (Object.keys(updatedVariables).length > 0) {
 			this.module.setVariableValues(updatedVariables)
+			this.module.checkFeedbacks()
 		}
 
 		// Log the number of variables updated
@@ -252,7 +253,7 @@ class VariableUpdatesCollector {
 		if (isFlooding) {
 			this.levelQueue.set(variableName, value)
 			if (!this.levelTimer) {
-				this.levelTimer = setTimeout(this.flushFloodingUpdates.bind(this), 350)
+				this.levelTimer = setTimeout(this.flushFloodingUpdates.bind(this), 250)
 			}
 		} else {
 			this.updateQueue.set(variableName, value)
