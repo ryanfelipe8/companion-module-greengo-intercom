@@ -87,7 +87,7 @@ class GreenGoModule extends InstanceBase {
 		await this.updateVariables()
 
 		this.updateActions()
-		//this.updateFeedbacks() // export feedbacks
+		this.updateFeedbacks()
 	}
 
 	// Destroy when module gets deleted
@@ -192,16 +192,16 @@ class GreenGoModule extends InstanceBase {
 		]
 	}
 
+	updateVariableDefinitions() {
+		UpdateVariableDefinitions(this)
+	}
+
 	updateActions() {
 		UpdateActions(this)
 	}
 
 	updateFeedbacks() {
 		UpdateFeedbacks(this)
-	}
-
-	updateVariableDefinitions() {
-		UpdateVariableDefinitions(this)
 	}
 }
 
