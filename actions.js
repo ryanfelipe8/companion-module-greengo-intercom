@@ -297,7 +297,7 @@ module.exports = function (self) {
 				}
 			},
 		},
-		inpputSource: {
+		inputSource: {
 			name: 'Set Input Source',
 			description: `Mute or unmute the device's input`,
 			options: [
@@ -318,14 +318,14 @@ module.exports = function (self) {
 					],
 					minChoicesForSearch: 0,
 					tooltip: 'Select input source that should be muted',
-				}
+				},
 			],
 			callback: (action) => {
 				let opt = action.options
 				const cmd = 'audio/mute'
 				self.osc.sendCommand(cmd, [opt.activeInput])
 			},
-		},		
+		},
 		directLevel: {
 			name: 'Set Direct Channel Level',
 			description: 'Control the output level for the temporary direct channel',
