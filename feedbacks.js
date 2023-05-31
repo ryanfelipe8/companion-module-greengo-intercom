@@ -17,7 +17,6 @@ module.exports = function (self) {
 				bgcolor: red,
 				color: white,
 			},
-			// options is how the user can choose the condition the feedback activates for
 			options: [
 				{
 					type: 'number',
@@ -66,16 +65,15 @@ module.exports = function (self) {
 				bgcolor: yellow,
 				color: black,
 			},
-			// options is how the user can choose the condition the feedback activates for
 			options: [
 				{
 					type: 'number',
-					label: 'Channel ID (1 - 32)',
+					label: `Channel ID (1 - ${self.config.channels})`,
 					id: 'chId',
-					tooltip: 'Define the channel ID',
 					default: 1,
 					min: 1,
-					max: 32,
+					max: self.config.channels,
+					tooltip: 'Define the channel ID',
 				},
 				{
 					type: 'dropdown',
@@ -116,7 +114,6 @@ module.exports = function (self) {
 				bgcolor: green,
 				color: white,
 			},
-			// options is how the user can choose the condition the feedback activates for
 			options: [],
 			callback: () => {
 				let variableName = `state_heartbeat`
@@ -141,7 +138,6 @@ module.exports = function (self) {
 				bgcolor: red,
 				color: white,
 			},
-			// options is how the user can choose the condition the feedback activates for
 			options: [],
 			callback: () => {
 				let variableName = `state_heartbeat`
@@ -166,7 +162,6 @@ module.exports = function (self) {
 				bgcolor: red,
 				color: white,
 			},
-			// options is how the user can choose the condition the feedback activates for
 			options: [
 				{
 					type: 'number',
@@ -214,14 +209,13 @@ module.exports = function (self) {
 				bgcolor: red,
 				color: white,
 			},
-			// options is how the user can choose the condition the feedback activates for
 			options: [
 				{
 					type: 'number',
-					label: 'Output Level (-40 - 12, mute: -63)',
+					label: 'Main Level (-40 - 12, mute: -63)',
 					id: 'mainLevel',
 					default: 0,
-					tooltip: 'Define the level',
+					tooltip: 'Define the main output level',
 				},
 			],
 			callback: (feedback) => {
@@ -248,7 +242,6 @@ module.exports = function (self) {
 				bgcolor: green,
 				color: black,
 			},
-			// options is how the user can choose the condition the feedback activates for
 			options: [
 				{
 					type: 'number',
@@ -283,7 +276,6 @@ module.exports = function (self) {
 				bgcolor: yellow,
 				color: black,
 			},
-			// options is how the user can choose the condition the feedback activates for
 			options: [
 				{
 					type: 'number',
