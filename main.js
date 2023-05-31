@@ -24,18 +24,22 @@ class GreenGoModule extends InstanceBase {
 							host: this.config.host,
 							port: this.config.port,
 						})
-				)
+				)				
+				this.updateStatus(InstanceStatus.Ok)
 			} catch (error) {
 				this.log(
-					'warn',
+					'error',
 					'Main: Could not initialize OSC Manager using configuration: ' +
 						JSON.stringify({
 							host: this.config.host,
 							port: this.config.port,
 						})
 				)
-				this.updateStatus(InstanceStatus.Warning)
+				this.updateStatus(InstanceStatus.Error,error.message)
 			}
+		} else {
+			let msg = 'IP or port configuration not found'
+			this.updateStatus(InstanceStatus.BadConfig,msg)
 		}
 	}
 
@@ -82,7 +86,6 @@ class GreenGoModule extends InstanceBase {
 				)
 			}
 		})
-		this.updateStatus(InstanceStatus.Ok)
 
 		await this.updateVariables()
 

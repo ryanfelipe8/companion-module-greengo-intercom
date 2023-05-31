@@ -1,3 +1,4 @@
+const { InstanceStatus } = require('@companion-module/base')
 const osc = require('osc')
 const EventEmitter = require('events')
 
@@ -52,6 +53,8 @@ class OscModule extends EventEmitter {
 		// Open the OSC port
 		this.oscServer.open()
 		this.oscClient.open()
+				
+		this.module.updateStatus(InstanceStatus.Ok)
 	}
 
 	// Handle all incoming OSC messages
