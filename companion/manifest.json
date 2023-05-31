@@ -1,7 +1,7 @@
 {
 	"id": "green-go-intercom",
 	"name": "green-go-intercom",
-	"shortname": "GGO Device",
+	"shortname": "GGO_Device",
 	"description": "Module to control Green-GO intercom devices",
 	"version": "0.0.1",
 	"license": "MIT",
