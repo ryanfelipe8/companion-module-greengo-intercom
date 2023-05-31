@@ -3,7 +3,8 @@ const UpgradeScripts = require('./upgrades')
 const UpdateActions = require('./actions')
 const UpdateFeedbacks = require('./feedbacks')
 const UpdateVariableDefinitions = require('./variables')
-const OSCServer = require('./osc')
+const UpdatePresets = require('./presets.js')
+const OscManager = require('./osc')
 
 class GreenGoModule extends InstanceBase {
 	constructor(internal) {
@@ -24,7 +25,7 @@ class GreenGoModule extends InstanceBase {
 							host: this.config.host,
 							port: this.config.port,
 						})
-				)				
+				)
 				this.updateStatus(InstanceStatus.Ok)
 			} catch (error) {
 				this.log(
@@ -35,11 +36,11 @@ class GreenGoModule extends InstanceBase {
 							port: this.config.port,
 						})
 				)
-				this.updateStatus(InstanceStatus.Error,error.message)
+				this.updateStatus(InstanceStatus.Error, error.message)
 			}
 		} else {
 			let msg = 'IP or port configuration not found'
-			this.updateStatus(InstanceStatus.BadConfig,msg)
+			this.updateStatus(InstanceStatus.BadConfig, msg)
 		}
 	}
 
@@ -61,7 +62,7 @@ class GreenGoModule extends InstanceBase {
 		// Initialize Config
 		this.config = config
 		// Initialize OSC Server
-		this.osc = new OSCServer(this)
+		this.osc = new OscManager(this)
 		// Initialize the variables
 		const variablesModule = UpdateVariableDefinitions(this)
 		// Mount internal variables & check a value
@@ -91,6 +92,7 @@ class GreenGoModule extends InstanceBase {
 
 		this.updateActions()
 		this.updateFeedbacks()
+		await this.updatePresets()
 	}
 
 	// Destroy when module gets deleted
@@ -131,6 +133,9 @@ class GreenGoModule extends InstanceBase {
 			}
 		}
 		await this.updateVariables()
+		this.updateActions()
+		this.updateFeedbacks()
+		await this.updatePresets()
 	}
 
 	// Return config fields for web config
@@ -205,6 +210,10 @@ class GreenGoModule extends InstanceBase {
 
 	updateFeedbacks() {
 		UpdateFeedbacks(this)
+	}
+
+	updatePresets() {
+		UpdatePresets(this)
 	}
 }
 
