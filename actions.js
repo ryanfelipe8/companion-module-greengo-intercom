@@ -310,11 +310,9 @@ module.exports = function (self) {
 				},
 				{
 					type: 'number',
-					label: 'Output Level (-40 - 12 dB)',
+					label: 'Output Level (-40 - 12 dB, mute: -63)',
 					id: 'chLevel',
 					default: 0,
-					min: -40,
-					max: 12,
 					tooltip: 'Set a specific output level for the channel',
 					isVisible: function (options) {
 						if (options.cycle == false) {
@@ -342,6 +340,7 @@ module.exports = function (self) {
 					// Get the variable name based on the channel ID
 					let variableName = 'state_level_direct'
 					// Set a min and max level for the channel level
+					const muteLevel = -63
 					const minLevel = -40
 					const maxLevel = 12
 					// Check if the variable exists
@@ -351,10 +350,12 @@ module.exports = function (self) {
 						// Increment the current value by the step size
 						let newValue = currentValue + opt.stepSize
 						// Ensure newValue is within the allowed range
-						if (newValue < minLevel) {
-							newValue = minLevel
+						if (newValue <= minLevel && newValue > muteLevel) {
+							newValue = newValue < currentValue ? muteLevel : minLevel
 						} else if (newValue > maxLevel) {
 							newValue = maxLevel
+						} else if (newValue < muteLevel) {
+							newValue = muteLevel
 						}
 						self.osc.sendCommand(cmd, [newValue])
 					} else {
@@ -463,11 +464,9 @@ module.exports = function (self) {
 				},
 				{
 					type: 'number',
-					label: 'Output Level (-40 - 12, -63 is mute)',
+					label: 'Output Level (-40 - 12, mute: -63)',
 					id: 'mainLevel',
 					default: 0,
-					min: -40,
-					max: 12,
 					tooltip: 'Set a specific output level for the device',
 					isVisible: function (options) {
 						if (options.cycle == false) {
@@ -495,6 +494,7 @@ module.exports = function (self) {
 					// Get the variable name based on the channel ID
 					let variableName = 'state_level_main'
 					// Set a min and max level for main level
+					const muteLevel = -63
 					const minLevel = -40
 					const maxLevel = 12
 					// Check if the variable exists
@@ -504,10 +504,12 @@ module.exports = function (self) {
 						// Increment the current value by the step size
 						let newValue = currentValue + opt.stepSize
 						// Ensure newValue is within the allowed range
-						if (newValue < minLevel) {
-							newValue = minLevel
+						if (newValue <= minLevel && newValue > muteLevel) {
+							newValue = newValue < currentValue ? muteLevel : minLevel
 						} else if (newValue > maxLevel) {
 							newValue = maxLevel
+						} else if (newValue < muteLevel) {
+							newValue = muteLevel
 						}
 						self.osc.sendCommand(cmd, [newValue])
 					} else {
@@ -581,11 +583,8 @@ module.exports = function (self) {
 				},
 				{
 					type: 'number',
-					label: 'Output Level (-40 - 12, -63 is mute)',
+					label: 'Output Level (-40 - 12, mute: -63)',
 					id: 'pgmLevel',
-					default: 0,
-					min: -40,
-					max: 12,
 					tooltip: 'Set a specific output level for the PGM special channel',
 					isVisible: function (options) {
 						if (options.cycle == false) {
@@ -613,6 +612,7 @@ module.exports = function (self) {
 					// Get the variable name based on the channel ID
 					let variableName = 'state_level_pgm'
 					// Define the min and max level for a channel
+					const muteLevel = -63
 					const minLevel = -40
 					const maxLevel = 12
 					// Check if the variable exists
@@ -622,10 +622,12 @@ module.exports = function (self) {
 						// Increment the current value by the step size
 						let newValue = currentValue + opt.stepSize
 						// Ensure newValue is within the allowed range
-						if (newValue < minLevel) {
-							newValue = minLevel
+						if (newValue <= minLevel && newValue > muteLevel) {
+							newValue = newValue < currentValue ? muteLevel : minLevel
 						} else if (newValue > maxLevel) {
 							newValue = maxLevel
+						} else if (newValue < muteLevel) {
+							newValue = muteLevel
 						}
 						self.osc.sendCommand(cmd, [newValue])
 					} else {
