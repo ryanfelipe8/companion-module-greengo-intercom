@@ -301,6 +301,50 @@ module.exports = function (self) {
 				}
 			},
 		},
+		inputSource: {
+			type: 'boolean',
+			name: 'Check Input Source',
+			description: `Change button styles depending on a device's input source`,
+			defaultStyle: {
+				bgcolor: red,
+				color: white,
+			},
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Active Input',
+					id: 'activeInput',
+					default: 4,
+					choices: [
+						{ id: '-4', label: '2.5 kHz' },
+						{ id: '-3', label: '1.2 kHz' },
+						{ id: '-2', label: '1 kHz' },
+						{ id: '-1', label: '375 Hz' },
+						{ id: '0', label: 'Headset' },
+						{ id: '1', label: 'Front-Mic' },
+						{ id: '2', label: 'Line-In' },
+						{ id: '4', label: 'Muted' },
+					],
+					minChoicesForSearch: 0,
+					tooltip: 'Select input source that should be muted',
+				},
+			],
+			callback: (feedback) => {
+				let opt = feedback.options
+				let variableName = `state_audio_source`
+				if (self.companionVariables.hasOwnProperty(variableName)) {
+					let var_state = self.companionVariables[variableName].value
+					if (var_state === opt.activeInput) {
+						return true
+					} else {
+						return false
+					}
+				} else {
+					self.log('error', `Feedbacks: The variable ${variableName} is not defined in companionVariables`)
+					return false
+				}
+			},
+		},
 		isolateState: {
 			type: 'boolean',
 			name: 'Check Isolate State',
@@ -310,15 +354,6 @@ module.exports = function (self) {
 				color: black,
 			},
 			options: [
-				{
-					type: 'number',
-					label: `Channel ID (1 - ${self.config.channels})`,
-					id: 'chId',
-					default: 1,
-					min: 1,
-					max: self.config.channels,
-					tooltip: 'Define the channel ID',
-				},
 				{
 					type: 'dropdown',
 					label: 'Channel Isolate State',

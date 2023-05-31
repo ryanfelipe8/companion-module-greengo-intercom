@@ -28,7 +28,7 @@ module.exports = function (module = {}) {
 		// Define user or device specific variables
 		const deviceVariables = [
 			{ variableId: 'state_audio_gain', name: 'Input Gain State' },
-			{ variableId: 'state_audio_mute', name: 'Cough Mute' },
+			{ variableId: 'state_audio_source', name: 'Input Source' },
 			{ variableId: 'state_mode_isolate', name: 'Isolate State' },
 			{ variableId: 'state_level_main', name: 'Main Level' },
 			{ variableId: 'state_level_pgm', name: 'PGM Level' },

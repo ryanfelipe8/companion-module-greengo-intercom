@@ -193,9 +193,9 @@ module.exports = function (self) {
 					minChoicesForSearch: 0,
 					tooltip: 'Select listen state',
 					isVisible: function (options) {
-						if (options.cycle == false) {
-							return true
-						} else return false
+						if (options.cycle == true) {
+							return false
+						} else return true
 					},
 				},
 			],
@@ -243,7 +243,7 @@ module.exports = function (self) {
 				{
 					type: 'number',
 					label: 'Output Level (-40 - 12 dB)',
-					id: 'chLevel',
+					id: 'channelLevel',
 					default: 0,
 					min: -40,
 					max: 12,
@@ -293,37 +293,8 @@ module.exports = function (self) {
 						self.log('error', `Actions: Could not cycle state because variable ${variableName} does not exist.`)
 					}
 				} else {
-					self.osc.sendCommand(cmd, [opt.chLevel, opt.chId])
+					self.osc.sendCommand(cmd, [opt.channelLevel, opt.chId])
 				}
-			},
-		},
-		inputSource: {
-			name: 'Set Input Source',
-			description: `Mute or unmute the device's input`,
-			options: [
-				{
-					type: 'dropdown',
-					label: 'Active Input',
-					id: 'activeInput',
-					default: 0,
-					choices: [
-						{ id: '-4', label: '2.5 kHz' },
-						{ id: '-3', label: '1.2 kHz' },
-						{ id: '-2', label: '1 kHz' },
-						{ id: '-1', label: '375 Hz' },
-						{ id: '0', label: 'Headset' },
-						{ id: '1', label: 'Front-Mic' },
-						{ id: '2', label: 'Line-In' },
-						{ id: '4', label: 'Muted' },
-					],
-					minChoicesForSearch: 0,
-					tooltip: 'Select input source that should be muted',
-				},
-			],
-			callback: (action) => {
-				let opt = action.options
-				const cmd = 'audio/mute'
-				self.osc.sendCommand(cmd, [opt.activeInput])
 			},
 		},
 		directLevel: {
@@ -340,7 +311,7 @@ module.exports = function (self) {
 				{
 					type: 'number',
 					label: 'Output Level (-40 - 12 dB, mute: -63)',
-					id: 'chLevel',
+					id: 'directLevel',
 					default: 0,
 					tooltip: 'Set a specific output level for the channel',
 					isVisible: function (options) {
@@ -391,7 +362,7 @@ module.exports = function (self) {
 						self.log('error', `Actions: Could not cycle state because variable ${variableName} does not exist.`)
 					}
 				} else {
-					self.osc.sendCommand(cmd, [opt.chLevel])
+					self.osc.sendCommand(cmd, [opt.directLevel])
 				}
 			},
 		},
@@ -472,6 +443,35 @@ module.exports = function (self) {
 				} else {
 					self.osc.sendCommand(cmd, [gainLevel])
 				}
+			},
+		},
+		inputSource: {
+			name: 'Set Input Source',
+			description: `Mute or unmute the device's input`,
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Active Input',
+					id: 'activeInput',
+					default: 0,
+					choices: [
+						{ id: '-4', label: '2.5 kHz' },
+						{ id: '-3', label: '1.2 kHz' },
+						{ id: '-2', label: '1 kHz' },
+						{ id: '-1', label: '375 Hz' },
+						{ id: '0', label: 'Headset' },
+						{ id: '1', label: 'Front-Mic' },
+						{ id: '2', label: 'Line-In' },
+						{ id: '4', label: 'Muted' },
+					],
+					minChoicesForSearch: 0,
+					tooltip: 'Select input source that should be muted',
+				},
+			],
+			callback: (action) => {
+				let opt = action.options
+				const cmd = 'audio/source'
+				self.osc.sendCommand(cmd, [opt.activeInput])
 			},
 		},
 		mainLevel: {
