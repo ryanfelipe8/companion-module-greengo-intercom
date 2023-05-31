@@ -297,6 +297,35 @@ module.exports = function (self) {
 				}
 			},
 		},
+		inpputSource: {
+			name: 'Set Input Source',
+			description: `Mute or unmute the device's input`,
+			options: [
+				{
+					type: 'dropdown',
+					label: 'Active Input',
+					id: 'activeInput',
+					default: 0,
+					choices: [
+						{ id: '-4', label: '2.5 kHz' },
+						{ id: '-3', label: '1.2 kHz' },
+						{ id: '-2', label: '1 kHz' },
+						{ id: '-1', label: '375 Hz' },
+						{ id: '0', label: 'Headset' },
+						{ id: '1', label: 'Front-Mic' },
+						{ id: '2', label: 'Line-In' },
+						{ id: '4', label: 'Muted' },
+					],
+					minChoicesForSearch: 0,
+					tooltip: 'Select input source that should be muted',
+				}
+			],
+			callback: (action) => {
+				let opt = action.options
+				const cmd = 'audio/mute'
+				self.osc.sendCommand(cmd, [opt.activeInput])
+			},
+		},		
 		directLevel: {
 			name: 'Set Direct Channel Level',
 			description: 'Control the output level for the temporary direct channel',
@@ -350,7 +379,7 @@ module.exports = function (self) {
 						// Increment the current value by the step size
 						let newValue = currentValue + opt.stepSize
 						// Ensure newValue is within the allowed range
-						if (newValue <= minLevel && newValue > muteLevel) {
+						if (newValue < minLevel && newValue > muteLevel) {
 							newValue = newValue < currentValue ? muteLevel : minLevel
 						} else if (newValue > maxLevel) {
 							newValue = maxLevel
@@ -436,12 +465,6 @@ module.exports = function (self) {
 						let currentValue = self.companionVariables[variableName].value
 						// Increment the current value by the step size
 						let newValue = currentValue + opt.stepSize
-						// Ensure newValue is within the allowed range
-						if (newValue < minLevel) {
-							newValue = minLevel
-						} else if (newValue > maxLevel) {
-							newValue = maxLevel
-						}
 						self.osc.sendCommand(cmd, [newValue])
 					} else {
 						self.log('error', `Actions: Could not cycle state because variable ${variableName} does not exist.`)
@@ -504,7 +527,7 @@ module.exports = function (self) {
 						// Increment the current value by the step size
 						let newValue = currentValue + opt.stepSize
 						// Ensure newValue is within the allowed range
-						if (newValue <= minLevel && newValue > muteLevel) {
+						if (newValue < minLevel && newValue > muteLevel) {
 							newValue = newValue < currentValue ? muteLevel : minLevel
 						} else if (newValue > maxLevel) {
 							newValue = maxLevel
@@ -622,7 +645,7 @@ module.exports = function (self) {
 						// Increment the current value by the step size
 						let newValue = currentValue + opt.stepSize
 						// Ensure newValue is within the allowed range
-						if (newValue <= minLevel && newValue > muteLevel) {
+						if (newValue < minLevel && newValue > muteLevel) {
 							newValue = newValue < currentValue ? muteLevel : minLevel
 						} else if (newValue > maxLevel) {
 							newValue = maxLevel
