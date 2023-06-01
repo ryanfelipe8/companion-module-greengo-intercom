@@ -152,7 +152,7 @@ module.exports = function (self) {
 		cueState: {
 			type: 'advanced',
 			name: 'Check Cue Signal',
-			description: `Change button styles depending on a channel's cue signal state.`,
+			description: `Change button styles depending on a channel's cue signal state`,
 			options: [
 				{
 					type: 'number',
@@ -163,6 +163,20 @@ module.exports = function (self) {
 					max: self.config.channels,
 					tooltip: 'Define the channel ID',
 				},
+				{
+					type: 'dropdown',
+					label: 'Cue Signal State',
+					id: 'cueState',
+					tooltip: 'Select the cue signal type for your style',
+					default: 2,
+					choices: [
+						{ id: 0, label: 'Idle' },
+						{ id: 2, label: 'Attention' },
+						{ id: 3, label: 'Ready' },
+						{ id: 4, label: 'Go' },
+					],
+					minChoicesForSearch: 0,
+				},
 			],
 			callback: (feedback) => {
 				let opt = feedback.options
@@ -170,25 +184,7 @@ module.exports = function (self) {
 				if (self.companionVariables.hasOwnProperty(variableName)) {
 					let var_state = self.companionVariables[variableName].value
 					if (var_state === opt.cueState) {
-						if (var_state === 2) {
-							return {
-								text: `CH${opt.chId}\nATT`,
-								bgcolor: yellow,
-								color: black,
-							}
-						} else if (var_state === 3) {
-							return {
-								text: `CH${opt.chId}\nRDY`,
-								bgcolor: orange,
-								color: white,
-							}
-						} else if (var_state === 4) {
-							return {
-								text: `CH${opt.chId}\nGO`,
-								bgcolor: green,
-								color: white,
-							}
-						}
+						return true
 					} else {
 						return false
 					}

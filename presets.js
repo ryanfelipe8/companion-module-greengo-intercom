@@ -208,6 +208,7 @@ function UpdatePresets(self) {
 					style: {
 						color: black,
 						bgcolor: yellow,
+						text: `CH${i}\\nATT`
 					},
 				},
 				{
@@ -219,6 +220,7 @@ function UpdatePresets(self) {
 					style: {
 						color: white,
 						bgcolor: orange,
+						text: `CH${i}\\nRDY`
 					},
 				},
 				{
@@ -230,6 +232,7 @@ function UpdatePresets(self) {
 					style: {
 						color: white,
 						bgcolor: green,
+						text: `CH${i}\\nGO`
 					},
 				},
 			],
