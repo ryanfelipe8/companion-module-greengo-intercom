@@ -150,7 +150,7 @@ module.exports = function (self) {
 			},
 		},
 		cueState: {
-			type: 'advanced',
+			type: 'boolean',
 			name: 'Check Cue Signal',
 			description: `Change button styles depending on a channel's cue signal state`,
 			options: [
