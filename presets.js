@@ -25,7 +25,6 @@ function UpdatePresets(self) {
 				{
 					down: [
 						{
-							// add an action on down press
 							actionId: 'channelTalk',
 							options: {
 								cycle: true,
@@ -86,7 +85,6 @@ function UpdatePresets(self) {
 				{
 					down: [
 						{
-							// add an action on down press
 							actionId: 'channelCall',
 							options: {
 								chId: i,
@@ -96,7 +94,6 @@ function UpdatePresets(self) {
 					],
 					up: [
 						{
-							// add an action on down press
 							actionId: 'channelCall',
 							options: {
 								chId: i,
@@ -104,13 +101,13 @@ function UpdatePresets(self) {
 							},
 						},
 					],
+					// Add a 2000ms duration group with the runWhileHeld property set
 					2000: {
 						options: {
 							runWhileHeld: true,
 						},
 						actions: [
 							{
-								// add an action on down press
 								actionId: 'channelCall',
 								options: {
 									chId: i,
@@ -121,7 +118,6 @@ function UpdatePresets(self) {
 					},
 					2001: [
 						{
-							// add an action on down press
 							actionId: 'channelCall',
 							options: {
 								chId: i,
@@ -192,7 +188,6 @@ function UpdatePresets(self) {
 				{
 					down: [
 						{
-							// add an action on down press
 							actionId: 'channelCue',
 							options: {
 								cycle: true,
@@ -253,7 +248,6 @@ function UpdatePresets(self) {
 				{
 					down: [
 						{
-							// add an action on down press
 							actionId: 'channelListen',
 							options: {
 								cycle: true,
@@ -316,7 +310,6 @@ function UpdatePresets(self) {
 				{
 					down: [
 						{
-							// add an action on down press
 							actionId: 'channelLevel',
 							options: {
 								cycle: true,
@@ -326,14 +319,12 @@ function UpdatePresets(self) {
 						},
 					],
 					up: [],
-					// Add duration group to unmute the channel
 					1000: {
 						options: {
 							runWhileHeld: true,
 						},
 						actions: [
 							{
-								// add an action on down press
 								actionId: 'channelListen',
 								options: {
 									chId: i,
@@ -405,7 +396,6 @@ function UpdatePresets(self) {
 				{
 					down: [
 						{
-							// add an action on down press
 							actionId: 'channelLevel',
 							options: {
 								cycle: true,
@@ -415,14 +405,12 @@ function UpdatePresets(self) {
 						},
 					],
 					up: [],
-					// Add duration group to unmute the channel
 					1000: {
 						options: {
 							runWhileHeld: true,
 						},
 						actions: [
 							{
-								// add an action on down press
 								actionId: 'channelListen',
 								options: {
 									chId: i,
@@ -495,7 +483,6 @@ function UpdatePresets(self) {
 			{
 				down: [
 					{
-						// add an action on down press
 						actionId: 'inputGain',
 						options: {
 							cycle: true,
@@ -534,7 +521,6 @@ function UpdatePresets(self) {
 			{
 				down: [
 					{
-						// add an action on down press
 						actionId: 'inputGain',
 						options: {
 							cycle: true,
@@ -573,7 +559,6 @@ function UpdatePresets(self) {
 			{
 				down: [
 					{
-						// add an action on down press
 						actionId: 'pgmLevel',
 						options: {
 							cycle: true,
@@ -582,14 +567,12 @@ function UpdatePresets(self) {
 					},
 				],
 				up: [],
-				// Add duration group to unmute the channel
 				1000: {
 					options: {
 						runWhileHeld: true,
 					},
 					actions: [
 						{
-							// add an action on down press
 							actionId: 'pgmLevel',
 							options: {
 								pgmLevel: -63,
@@ -658,7 +641,6 @@ function UpdatePresets(self) {
 			{
 				down: [
 					{
-						// add an action on down press
 						actionId: 'pgmLevel',
 						options: {
 							cycle: true,
@@ -667,14 +649,12 @@ function UpdatePresets(self) {
 					},
 				],
 				up: [],
-				// Add duration group to unmute the channel
 				1000: {
 					options: {
 						runWhileHeld: true,
 					},
 					actions: [
 						{
-							// add an action on down press
 							actionId: 'pgmLevel',
 							options: {
 								pgmLevel: -63,
@@ -743,7 +723,6 @@ function UpdatePresets(self) {
 			{
 				down: [
 					{
-						// add an action on down press
 						actionId: 'directLevel',
 						options: {
 							cycle: true,
@@ -759,7 +738,6 @@ function UpdatePresets(self) {
 					},
 					actions: [
 						{
-							// add an action on down press
 							actionId: 'directLevel',
 							options: {
 								directLevel: 0,
@@ -828,7 +806,6 @@ function UpdatePresets(self) {
 			{
 				down: [
 					{
-						// add an action on down press
 						actionId: 'directLevel',
 						options: {
 							cycle: true,
@@ -844,7 +821,6 @@ function UpdatePresets(self) {
 					},
 					actions: [
 						{
-							// add an action on down press
 							actionId: 'directLevel',
 							options: {
 								directLevel: -63,
@@ -913,7 +889,6 @@ function UpdatePresets(self) {
 			{
 				down: [
 					{
-						// add an action on down press
 						actionId: 'inputSource',
 						options: {
 							activeInput: 4,
@@ -922,7 +897,6 @@ function UpdatePresets(self) {
 				],
 				up: [
 					{
-						// add an action on down press
 						actionId: 'inputSource',
 						options: {
 							activeInput: 0,
@@ -958,7 +932,6 @@ function UpdatePresets(self) {
 			{
 				down: [
 					{
-						// add an action on down press
 						actionId: 'modeIsolate',
 						options: {
 							cycle: true,
@@ -996,7 +969,6 @@ function UpdatePresets(self) {
 			{
 				down: [
 					{
-						// add an action on down press
 						actionId: 'identifyDevice',
 						options: {
 							identifyState: 1,
