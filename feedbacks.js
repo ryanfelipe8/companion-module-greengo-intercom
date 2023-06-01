@@ -344,7 +344,7 @@ module.exports = function (self) {
 		isolateState: {
 			type: 'boolean',
 			name: 'Check Isolate State',
-			description: `Change button styles depending on a device's isolate state.`,
+			description: `Change button styles depending on a device's isolate state`,
 			defaultStyle: {
 				bgcolor: yellow,
 				color: black,
@@ -382,7 +382,7 @@ module.exports = function (self) {
 		listenState: {
 			type: 'boolean',
 			name: 'Check Listen State',
-			description: `Change button styles depending on a channel's listen state.`,
+			description: `Change button styles depending on a channel's listen state`,
 			defaultStyle: {
 				bgcolor: red,
 				color: white,
@@ -429,7 +429,7 @@ module.exports = function (self) {
 		mainLevel: {
 			type: 'boolean',
 			name: 'Check Main Level',
-			description: `Change button styles depending on the main output level.`,
+			description: `Change button styles depending on the main output level`,
 			defaultStyle: {
 				bgcolor: red,
 				color: white,
@@ -462,7 +462,7 @@ module.exports = function (self) {
 		pgmLevel: {
 			type: 'boolean',
 			name: 'Check PGM Level',
-			description: `Change button styles depending on the PGM output level.`,
+			description: `Change button styles depending on the PGM output level`,
 			defaultStyle: {
 				bgcolor: red,
 				color: white,
@@ -495,7 +495,7 @@ module.exports = function (self) {
 		talkState: {
 			type: 'boolean',
 			name: 'Check Talk State',
-			description: `Change button styles depending on a channel's talk state.`,
+			description: `Change button styles depending on a channel's talk state`,
 			defaultStyle: {
 				bgcolor: green,
 				color: black,
@@ -543,7 +543,7 @@ module.exports = function (self) {
 		voxState: {
 			type: 'boolean',
 			name: 'Check VOX State',
-			description: `Change button styles depending on a channel's VOX state (incoming audio).`,
+			description: `Change button styles depending on a channel's VOX state (incoming audio)`,
 			defaultStyle: {
 				bgcolor: yellow,
 				color: black,
