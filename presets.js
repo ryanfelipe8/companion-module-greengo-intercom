@@ -548,6 +548,170 @@ function UpdatePresets(self) {
 			},
 		],
 	}
+	presets[`main_level_up`] = {
+		type: 'button',
+		category: 'Audio Controls',
+		name: `Increase Main output level`,
+		style: {
+			text: `Main ⬆️\\n$(GGO_Device:state_level_main) dB`,
+			size: '18',
+			color: white,
+			bgcolor: black,
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: 'mainLevel',
+						options: {
+							cycle: true,
+							stepSize: 3,
+						},
+					},
+				],
+				up: [],
+				1000: {
+					options: {
+						runWhileHeld: true,
+					},
+					actions: [
+						{
+							actionId: 'mainLevel',
+							options: {
+								mainLevel: 0,
+							},
+						},
+					],
+				},
+			},
+		],
+		feedbacks: [
+			{
+				feedbackId: 'mainLevel',
+				options: {
+					mainLevel: -63,
+				},
+				style: {
+					color: white,
+					bgcolor: red,
+					text: `Main ⬆️\\nMuted`,
+				},
+			},
+			{
+				feedbackId: 'mainLevel',
+				options: {
+					mainLevel: -40,
+				},
+				style: {
+					color: black,
+					bgcolor: yellow,
+					text: `Main ⬆️\\n$(GGO_Device:state_level_main) dB`,
+				},
+			},
+			{
+				feedbackId: 'mainLevel',
+				options: {
+					mainLevel: -20,
+				},
+				style: {
+					color: white,
+					bgcolor: green,
+				},
+			},
+			{
+				feedbackId: 'mainLevel',
+				options: {
+					mainLevel: 1,
+				},
+				style: {
+					color: white,
+					bgcolor: orange,
+				},
+			},
+		],
+	}
+	presets[`main_level_down`] = {
+		type: 'button',
+		category: 'Audio Controls',
+		name: `Decrease Main output level`,
+		style: {
+			text: `Main ⬇️\\n$(GGO_Device:state_level_main) dB`,
+			size: '18',
+			color: white,
+			bgcolor: black,
+		},
+		steps: [
+			{
+				down: [
+					{
+						actionId: 'mainLevel',
+						options: {
+							cycle: true,
+							stepSize: -3,
+						},
+					},
+				],
+				up: [],
+				1000: {
+					options: {
+						runWhileHeld: true,
+					},
+					actions: [
+						{
+							actionId: 'mainLevel',
+							options: {
+								mainLevel: -63,
+							},
+						},
+					],
+				},
+			},
+		],
+		feedbacks: [
+			{
+				feedbackId: 'mainLevel',
+				options: {
+					mainLevel: -63,
+				},
+				style: {
+					color: white,
+					bgcolor: red,
+					text: `Main ⬇️\\nMuted`,
+				},
+			},
+			{
+				feedbackId: 'mainLevel',
+				options: {
+					mainLevel: -40,
+				},
+				style: {
+					color: black,
+					bgcolor: yellow,
+					text: `Main ⬇️\\n$(GGO_Device:state_level_main) dB`,
+				},
+			},
+			{
+				feedbackId: 'mainLevel',
+				options: {
+					mainLevel: -20,
+				},
+				style: {
+					color: white,
+					bgcolor: green,
+				},
+			},
+			{
+				feedbackId: 'mainLevel',
+				options: {
+					mainLevel: 1,
+				},
+				style: {
+					color: white,
+					bgcolor: orange,
+				},
+			},
+		],
+	}
 	presets[`pgm_level_up`] = {
 		type: 'button',
 		category: 'Special Channels',
@@ -578,7 +742,7 @@ function UpdatePresets(self) {
 						{
 							actionId: 'pgmLevel',
 							options: {
-								pgmLevel: -63,
+								pgmLevel: 0,
 							},
 						},
 					],
