@@ -582,6 +582,21 @@ function UpdatePresets(self) {
 					},
 				],
 				up: [],
+				// Add duration group to unmute the channel
+				1000: {
+					options: {
+						runWhileHeld: true,
+					},
+					actions: [
+						{
+							// add an action on down press
+							actionId: 'pgmLevel',
+							options: {
+								pgmLevel: -63,
+							},
+						},
+					],
+				},
 			},
 		],
 		feedbacks: [
@@ -652,6 +667,21 @@ function UpdatePresets(self) {
 					},
 				],
 				up: [],
+				// Add duration group to unmute the channel
+				1000: {
+					options: {
+						runWhileHeld: true,
+					},
+					actions: [
+						{
+							// add an action on down press
+							actionId: 'pgmLevel',
+							options: {
+								pgmLevel: -63,
+							},
+						},
+					],
+				},
 			},
 		],
 		feedbacks: [
