@@ -3,7 +3,7 @@
 	"name": "green-go-intercom",
 	"shortname": "GGO_Device",
 	"description": "Module to control Green-GO intercom devices",
-	"version": "0.0.1",
+	"version": "1.0.0",
 	"license": "MIT",
 	"repository": "git+https://github.com/bitfocus/companion-module-green-go-intercom.git",
 	"bugs": "https://github.com/bitfocus/companion-module-green-go-intercom/issues",
