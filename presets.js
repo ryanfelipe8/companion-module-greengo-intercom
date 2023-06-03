@@ -33,20 +33,20 @@ function UpdatePresets(self) {
 						},
 					],
 					up: [],
+					// Add duration group to simulate latch/mom behavior
+					350: [
+						{
+							actionId: 'channelTalk',
+							options: {
+								cycle: false,
+								chId: i,
+								talkState: 0,
+							},
+						},
+					],
 				},
 			],
 			feedbacks: [
-				{
-					feedbackId: 'voxState',
-					options: {
-						chId: i,
-						voxState: 3,
-					},
-					style: {
-						color: black,
-						bgcolor: yellow,
-					},
-				},
 				{
 					feedbackId: 'talkState',
 					options: {
@@ -54,7 +54,6 @@ function UpdatePresets(self) {
 						talkState: 2,
 					},
 					style: {
-						color: white,
 						bgcolor: green,
 					},
 				},
@@ -65,8 +64,17 @@ function UpdatePresets(self) {
 						talkState: 3,
 					},
 					style: {
-						color: white,
 						bgcolor: green,
+					},
+				},
+				{
+					feedbackId: 'channelState',
+					options: {
+						chId: i,
+						channelState: 3,
+					},
+					style: {
+						color: yellow,
 					},
 				},
 			],
@@ -208,7 +216,7 @@ function UpdatePresets(self) {
 					style: {
 						color: black,
 						bgcolor: yellow,
-						text: `CH${i}\\nATT`
+						text: `CH${i}\\nATT`,
 					},
 				},
 				{
@@ -220,7 +228,7 @@ function UpdatePresets(self) {
 					style: {
 						color: white,
 						bgcolor: orange,
-						text: `CH${i}\\nRDY`
+						text: `CH${i}\\nRDY`,
 					},
 				},
 				{
@@ -232,7 +240,7 @@ function UpdatePresets(self) {
 					style: {
 						color: white,
 						bgcolor: green,
-						text: `CH${i}\\nGO`
+						text: `CH${i}\\nGO`,
 					},
 				},
 			],
@@ -263,10 +271,10 @@ function UpdatePresets(self) {
 			],
 			feedbacks: [
 				{
-					feedbackId: 'voxState',
+					feedbackId: 'channelState',
 					options: {
 						chId: i,
-						voxState: 3,
+						channelState: 3,
 					},
 					style: {
 						color: black,
@@ -289,7 +297,6 @@ function UpdatePresets(self) {
 					feedbackId: 'voxStateMuted',
 					options: {
 						chId: i,
-						voxState: 3,
 					},
 					style: {
 						color: yellow,
@@ -346,30 +353,41 @@ function UpdatePresets(self) {
 						channelLevel: -40,
 					},
 					style: {
-						color: black,
-						bgcolor: yellow,
+						color: yellow,
+						bgcolor: black,
 					},
 				},
 				{
 					feedbackId: 'channelLevel',
 					options: {
 						chId: i,
-						channelLevel: -20,
+						channelLevel: -17,
 					},
 					style: {
-						color: white,
-						bgcolor: green,
+						color: green,
+						bgcolor: black,
 					},
 				},
 				{
 					feedbackId: 'channelLevel',
 					options: {
 						chId: i,
-						channelLevel: 1,
+						channelLevel: 3,
 					},
 					style: {
-						color: white,
-						bgcolor: orange,
+						color: orange,
+						bgcolor: black,
+					},
+				},
+				{
+					feedbackId: 'channelLevel',
+					options: {
+						chId: i,
+						channelLevel: 8,
+					},
+					style: {
+						color: red,
+						bgcolor: black,
 					},
 				},
 				{
@@ -432,30 +450,41 @@ function UpdatePresets(self) {
 						channelLevel: -40,
 					},
 					style: {
-						color: black,
-						bgcolor: yellow,
+						color: yellow,
+						bgcolor: black,
 					},
 				},
 				{
 					feedbackId: 'channelLevel',
 					options: {
 						chId: i,
-						channelLevel: -20,
+						channelLevel: -17,
 					},
 					style: {
-						color: white,
-						bgcolor: green,
+						color: green,
+						bgcolor: black,
 					},
 				},
 				{
 					feedbackId: 'channelLevel',
 					options: {
 						chId: i,
-						channelLevel: 1,
+						channelLevel: 3,
 					},
 					style: {
-						color: white,
-						bgcolor: orange,
+						color: orange,
+						bgcolor: black,
+					},
+				},
+				{
+					feedbackId: 'channelLevel',
+					options: {
+						chId: i,
+						channelLevel: 8,
+					},
+					style: {
+						color: red,
+						bgcolor: black,
 					},
 				},
 				{
@@ -603,29 +632,39 @@ function UpdatePresets(self) {
 					mainLevel: -40,
 				},
 				style: {
-					color: black,
-					bgcolor: yellow,
+					color: yellow,
+					bgcolor: black,
 					text: `Main ⬆️\\n$(GGO_Device:state_level_main) dB`,
 				},
 			},
 			{
 				feedbackId: 'mainLevel',
 				options: {
-					mainLevel: -20,
+					mainLevel: -17,
 				},
 				style: {
-					color: white,
-					bgcolor: green,
+					color: green,
+					bgcolor: black,
 				},
 			},
 			{
 				feedbackId: 'mainLevel',
 				options: {
-					mainLevel: 1,
+					mainLevel: 3,
 				},
 				style: {
-					color: white,
-					bgcolor: orange,
+					color: orange,
+					bgcolor: black,
+				},
+			},
+			{
+				feedbackId: 'mainLevel',
+				options: {
+					mainLevel: 8,
+				},
+				style: {
+					color: red,
+					bgcolor: black,
 				},
 			},
 		],
@@ -685,29 +724,39 @@ function UpdatePresets(self) {
 					mainLevel: -40,
 				},
 				style: {
-					color: black,
-					bgcolor: yellow,
+					color: yellow,
+					bgcolor: black,
 					text: `Main ⬇️\\n$(GGO_Device:state_level_main) dB`,
 				},
 			},
 			{
 				feedbackId: 'mainLevel',
 				options: {
-					mainLevel: -20,
+					mainLevel: -17,
 				},
 				style: {
-					color: white,
-					bgcolor: green,
+					color: green,
+					bgcolor: black,
 				},
 			},
 			{
 				feedbackId: 'mainLevel',
 				options: {
-					mainLevel: 1,
+					mainLevel: 3,
 				},
 				style: {
-					color: white,
-					bgcolor: orange,
+					color: orange,
+					bgcolor: black,
+				},
+			},
+			{
+				feedbackId: 'mainLevel',
+				options: {
+					mainLevel: 8,
+				},
+				style: {
+					color: red,
+					bgcolor: black,
 				},
 			},
 		],
@@ -767,29 +816,39 @@ function UpdatePresets(self) {
 					pgmLevel: -40,
 				},
 				style: {
-					color: black,
-					bgcolor: yellow,
+					color: yellow,
+					bgcolor: black,
 					text: `PGM ⬆️\\n$(GGO_Device:state_level_pgm) dB`,
 				},
 			},
 			{
 				feedbackId: 'pgmLevel',
 				options: {
-					pgmLevel: -20,
+					pgmLevel: -17,
 				},
 				style: {
-					color: white,
-					bgcolor: green,
+					color: green,
+					bgcolor: black,
 				},
 			},
 			{
 				feedbackId: 'pgmLevel',
 				options: {
-					pgmLevel: 1,
+					pgmLevel: 3,
 				},
 				style: {
-					color: white,
-					bgcolor: orange,
+					color: orange,
+					bgcolor: black,
+				},
+			},
+			{
+				feedbackId: 'pgmLevel',
+				options: {
+					pgmLevel: 8,
+				},
+				style: {
+					color: red,
+					bgcolor: black,
 				},
 			},
 		],
@@ -849,29 +908,39 @@ function UpdatePresets(self) {
 					pgmLevel: -40,
 				},
 				style: {
-					color: black,
-					bgcolor: yellow,
+					color: yellow,
+					bgcolor: black,
 					text: `PGM ⬇️\\n$(GGO_Device:state_level_pgm) dB`,
 				},
 			},
 			{
 				feedbackId: 'pgmLevel',
 				options: {
-					pgmLevel: -20,
+					pgmLevel: -17,
 				},
 				style: {
-					color: white,
-					bgcolor: green,
+					color: green,
+					bgcolor: black,
 				},
 			},
 			{
 				feedbackId: 'pgmLevel',
 				options: {
-					pgmLevel: 1,
+					pgmLevel: 3,
 				},
 				style: {
-					color: white,
-					bgcolor: orange,
+					color: orange,
+					bgcolor: black,
+				},
+			},
+			{
+				feedbackId: 'pgmLevel',
+				options: {
+					pgmLevel: 8,
+				},
+				style: {
+					color: red,
+					bgcolor: black,
 				},
 			},
 		],
@@ -932,29 +1001,39 @@ function UpdatePresets(self) {
 					directLevel: -40,
 				},
 				style: {
-					color: black,
-					bgcolor: yellow,
+					color: yellow,
+					bgcolor: black,
 					text: `Direct ⬆️\\n$(GGO_Device:state_level_direct) dB`,
 				},
 			},
 			{
 				feedbackId: 'directLevel',
 				options: {
-					directLevel: -20,
+					directLevel: -17,
 				},
 				style: {
-					color: white,
-					bgcolor: green,
+					color: green,
+					bgcolor: black,
 				},
 			},
 			{
 				feedbackId: 'directLevel',
 				options: {
-					directLevel: 1,
+					directLevel: 3,
 				},
 				style: {
-					color: white,
-					bgcolor: orange,
+					color: orange,
+					bgcolor: black,
+				},
+			},
+			{
+				feedbackId: 'mainLevel',
+				options: {
+					directLevel: 8,
+				},
+				style: {
+					color: red,
+					bgcolor: black,
 				},
 			},
 		],
@@ -1015,29 +1094,39 @@ function UpdatePresets(self) {
 					directLevel: -40,
 				},
 				style: {
-					color: black,
-					bgcolor: yellow,
+					color: yellow,
+					bgcolor: black,
 					text: `Direct ⬇️\\n$(GGO_Device:state_level_direct) dB`,
 				},
 			},
 			{
 				feedbackId: 'directLevel',
 				options: {
-					directLevel: -20,
+					directLevel: -17,
 				},
 				style: {
-					color: white,
-					bgcolor: green,
+					color: green,
+					bgcolor: black,
 				},
 			},
 			{
 				feedbackId: 'directLevel',
 				options: {
-					directLevel: 1,
+					directLevel: 3,
 				},
 				style: {
-					color: white,
-					bgcolor: orange,
+					color: orange,
+					bgcolor: black,
+				},
+			},
+			{
+				feedbackId: 'mainLevel',
+				options: {
+					directLevel: 8,
+				},
+				style: {
+					color: red,
+					bgcolor: black,
 				},
 			},
 		],

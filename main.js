@@ -128,7 +128,7 @@ class GreenGoModule extends InstanceBase {
 		// Re-initialize OSC if the configuration has been updated (host or port)
 		if (oldConfig.host !== this.config.host || oldConfig.port !== this.config.port) {
 			{
-				this.log('info', 'Main: Configuration change detected (IP address or port), restarting OSC Manger.')
+				this.log('info', 'Main: Configuration change detected (IP address or port), restarting OSC Manger')
 				await this.initializeOsc()
 			}
 		}
@@ -148,23 +148,22 @@ class GreenGoModule extends InstanceBase {
 				width: 8,
 				required: true,
 				regex: Regex.IP,
-				tooltip: 'Select the IPv4 address your Green-GO device is using.',
+				tooltip: 'Select the IPv4 address your Green-GO device is using',
 			},
 			{
 				type: 'textinput',
 				id: 'port',
-				label: 'Script Port',
+				label: 'Control Port',
 				width: 4,
 				required: true,
 				regex: Regex.PORT,
-				tooltip: 'Select the port the Green-GO "osc-remote" script is using.',
+				tooltip: 'Select the port the Green-GO "osc-remote" script is using',
 			},
 			{
 				type: 'dropdown',
 				id: 'deviceType',
 				label: 'Device Type',
 				width: 8,
-				required: true,
 				default: 'BPX',
 				choices: [
 					{ id: 'BPX', label: 'BPX' },
@@ -175,7 +174,7 @@ class GreenGoModule extends InstanceBase {
 					{ id: 'INTX', label: 'INTX' },
 				],
 				minChoicesForSearch: 0,
-				tooltip: 'Select the type of Green-GO device you are connecting to (only placholder, has no real function).',
+				tooltip: 'Select the type of Green-GO device you are connecting to (only placholder, has no real function)',
 			},
 			{
 				type: 'number',
@@ -187,7 +186,7 @@ class GreenGoModule extends InstanceBase {
 				min: 1,
 				max: 6,
 				regex: Regex.number,
-				tooltip: 'Define the amount of channels to control (1 - 6) via this module.',
+				tooltip: 'Define the amount of channels to control (1 - 6) via this module',
 			},
 			{
 				type: 'static-text',
@@ -195,7 +194,7 @@ class GreenGoModule extends InstanceBase {
 				width: 12,
 				label: 'Important Notice',
 				value:
-					'Before using the Green-GO module for Bitfocus Companion, make sure to load the "osc-remote.gg5t" script file onto your Green-GO device. This plugin will not function without that script running!<br><br>If you have any questions, please consult our <a href="https://companion.greengo.digital">documentation</a> for further details or contact our <a href="https://companion.greengo.digital">community</a>.',
+					'Before using the Green-GO module for Bitfocus Companion, make sure to compile and load the <a href="https://github.com/bitfocus/companion-module-greengo-intercom/blob/master/osc-remote.gg5t" alt="osc-remote Green-GO Script">osc-remote.gg5t</a> script file onto your Green-GO device.<br><br>This module will not function without that script running!',
 			},
 		]
 	}

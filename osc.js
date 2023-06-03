@@ -7,8 +7,7 @@ class OscModule extends EventEmitter {
 	constructor(module) {
 		super()
 		this.module = module
-		this.oscServer = null
-		this.oscClient = null
+		this.oscPort = null
 		this.stateUpdateTimer = null
 		this.heartbeatTimer = null
 		this.updatesCollector = new VariableUpdatesCollector(this.updateVariableValues.bind(this))
@@ -25,35 +24,27 @@ class OscModule extends EventEmitter {
 			this.module.log('error', `OSC Manager: Config not initialized`)
 			return
 		}
-		if (this.oscServer || this.oscClient) {
+		if (this.oscPort) {
 			this.module.log('debug', 'OSC Manager: Running instance found, restarting the OSC listeners')
 			this.closeOSCListeners()
 		}
 
 		// Initialize OSC server
-		this.oscServer = new osc.UDPPort({
+		this.oscPort = new osc.UDPPort({
 			localAddress: '0.0.0.0',
 			localPort: this.config.port,
-			metadata: true,
-		})
-
-		// Initialize OSC client
-		this.oscClient = new osc.UDPPort({
-			localAddress: '0.0.0.0',
 			remoteAddress: this.config.host,
 			remotePort: this.config.port,
 			metadata: true,
 		})
 
 		// Add listeners for OSC messages and errors
-		this.oscServer.on('message', (oscMsg) => this.onMessage(oscMsg))
-		this.oscServer.on('error', (error) => this.onError(error))
-		this.oscClient.on('error', (error) => this.onError(error))
+		this.oscPort.on('message', (oscMsg) => this.onMessage(oscMsg))
+		this.oscPort.on('error', (error) => this.onError(error))
 
 		// Open the OSC port
-		this.oscServer.open()
-		this.oscClient.open()
-				
+		this.oscPort.open()
+
 		this.module.updateStatus(InstanceStatus.Ok)
 	}
 
@@ -86,7 +77,7 @@ class OscModule extends EventEmitter {
 		// this.module.log('debug', `OSC Manager: Received message for ${oscMsg.address}: ${JSON.stringify(oscMsg.args)}`)
 		// Handle command and state messages
 		if (oscMsg.address.startsWith('/ggo/state/')) {
-			let variableName = this.parsePathToVariable(oscMsg)
+			const variableName = this.parsePathToVariable(oscMsg)
 			// Check if constructed variable name exists before handling the message
 			if (variableName in this.companionVariables) {
 				// Separate values that may create a message flood to treat them differently
@@ -172,7 +163,7 @@ class OscModule extends EventEmitter {
 		const args = values.map((value) => ({ type: 'i', value }))
 
 		// Send command to Green-GO device
-		this.oscClient.send({
+		this.oscPort.send({
 			address: '/ggo/cmd/' + cmd,
 			args: args,
 		})
@@ -184,7 +175,7 @@ class OscModule extends EventEmitter {
 
 	// Request state update from Green-GO device. Runs as a timer to ensure we receive an update when the device comes online
 	requestStateUpdate() {
-		if (this.oscClient) {
+		if (this.oscPort) {
 			const sendUpdateRequest = () => {
 				// Request state update from Green-GO device
 				this.sendCommand('update', 1)
@@ -216,15 +207,10 @@ class OscModule extends EventEmitter {
 
 	// Helper function to close existing connections
 	closeOSCListeners() {
-		if (this.oscServer) {
-			this.oscServer.close()
-			this.oscServer = null
+		if (this.oscPort) {
+			this.oscPort.close()
+			this.oscPort = null
 			this.module.log('debug', 'OSC Manager: Closed OSC server')
-		}
-		if (this.oscClient) {
-			this.oscClient.close()
-			this.oscClient = null
-			this.module.log('debug', 'OSC Manager: Closed OSC client')
 		}
 	}
 

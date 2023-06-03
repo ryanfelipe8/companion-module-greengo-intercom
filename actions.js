@@ -404,6 +404,7 @@ module.exports = function (self) {
 					type: 'number',
 					label: 'Gain Level',
 					id: 'gainLevel',
+					default: 0,
 					tooltip: 'Set a specific input gain',
 					isVisible: function (options) {
 						if (options.cycle == false) {
@@ -608,6 +609,7 @@ module.exports = function (self) {
 					type: 'number',
 					label: 'Output Level (-40 - 12, mute: -63)',
 					id: 'pgmLevel',
+					default: 0,
 					tooltip: 'Set a specific output level for the PGM special channel',
 					isVisible: function (options) {
 						if (options.cycle == false) {

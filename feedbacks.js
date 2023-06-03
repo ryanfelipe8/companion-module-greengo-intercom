@@ -149,6 +149,54 @@ module.exports = function (self) {
 				}
 			},
 		},
+		channelState: {
+			type: 'boolean',
+			name: 'Check Channel State',
+			description: `Change button styles depending on a channel's input state`,
+			defaultStyle: {
+				bgcolor: yellow,
+				color: black,
+			},
+			options: [
+				{
+					type: 'number',
+					label: `Channel ID (1 - ${self.config.channels})`,
+					id: 'chId',
+					default: 1,
+					min: 1,
+					max: self.config.channels,
+					tooltip: 'Define the channel ID',
+				},
+				{
+					type: 'dropdown',
+					label: 'Channel State',
+					id: 'channelState',
+					tooltip: 'Select the channel state for your style',
+					default: 3,
+					choices: [
+						{ id: 0, label: 'No Member' },
+						{ id: 1, label: 'Members Available' },
+						{ id: 3, label: 'VOX Active' },
+					],
+					minChoicesForSearch: 0,
+				},
+			],
+			callback: (feedback) => {
+				let opt = feedback.options
+				let variableName = `state_input_ch` + opt.chId
+				if (self.companionVariables.hasOwnProperty(variableName)) {
+					let var_state = self.companionVariables[variableName].value
+					if (var_state === opt.channelState) {
+						return true
+					} else {
+						return false
+					}
+				} else {
+					self.log('error', `Feedbacks: The variable ${variableName} is not defined in companionVariables`)
+					return false
+				}
+			},
+		},
 		cueState: {
 			type: 'boolean',
 			name: 'Check Cue Signal',
@@ -540,58 +588,10 @@ module.exports = function (self) {
 				}
 			},
 		},
-		voxState: {
-			type: 'boolean',
-			name: 'Check VOX State',
-			description: `Change button styles depending on a channel's VOX state (incoming audio)`,
-			defaultStyle: {
-				bgcolor: yellow,
-				color: black,
-			},
-			options: [
-				{
-					type: 'number',
-					label: `Channel ID (1 - ${self.config.channels})`,
-					id: 'chId',
-					default: 1,
-					min: 1,
-					max: self.config.channels,
-					tooltip: 'Define the channel ID',
-				},
-				{
-					type: 'dropdown',
-					label: 'Talk State',
-					id: 'voxState',
-					tooltip: 'Select the VOX state for your style',
-					default: 3,
-					choices: [
-						{ id: 0, label: 'Idle' },
-						{ id: 1, label: 'Talk Active' },
-						{ id: 3, label: 'VOX Active' },
-					],
-					minChoicesForSearch: 0,
-				},
-			],
-			callback: (feedback) => {
-				let opt = feedback.options
-				let variableName = `state_input_vox_ch` + opt.chId
-				if (self.companionVariables.hasOwnProperty(variableName)) {
-					let var_state = self.companionVariables[variableName].value
-					if (var_state === opt.voxState) {
-						return true
-					} else {
-						return false
-					}
-				} else {
-					self.log('error', `Feedbacks: The variable ${variableName} is not defined in companionVariables`)
-					return false
-				}
-			},
-		},
 		voxStateMuted: {
 			type: 'boolean',
 			name: 'Check VOX State (Muted)',
-			description: `Change button styles depending on a channel's VOX state (incoming audio)`,
+			description: `Change button styles depending on a channel's input VOX and listen state (incoming audio)`,
 			defaultStyle: {
 				bgcolor: yellow,
 				color: black,
@@ -606,28 +606,15 @@ module.exports = function (self) {
 					max: self.config.channels,
 					tooltip: 'Define the channel ID',
 				},
-				{
-					type: 'dropdown',
-					label: 'Talk State',
-					id: 'voxState',
-					tooltip: 'Select the VOX state for your style',
-					default: 3,
-					choices: [
-						{ id: 0, label: 'Idle' },
-						{ id: 1, label: 'Talk Active' },
-						{ id: 3, label: 'VOX Active' },
-					],
-					minChoicesForSearch: 0,
-				},
 			],
 			callback: (feedback) => {
 				let opt = feedback.options
-				let variableName = `state_input_vox_ch` + opt.chId
+				let variableName = `state_input_ch` + opt.chId
 				if (self.companionVariables.hasOwnProperty(variableName)) {
 					let var_state = self.companionVariables[variableName].value
 					let listenVariableName = 'state_listen_ch' + opt.chId
 					if (self.companionVariables[listenVariableName].value === 0) {
-						if (var_state === opt.voxState) {
+						if (var_state === 3) {
 							return true
 						} else {
 							return false

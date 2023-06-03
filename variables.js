@@ -20,7 +20,7 @@ module.exports = function (module = {}) {
 				{ variableId: `state_cue_ch${i}`, name: `Cue State (CH${i})` },
 				{ variableId: `state_listen_ch${i}`, name: `Listen State (CH${i})` },
 				{ variableId: `state_level_ch${i}`, name: `Level (CH${i})` },
-				{ variableId: `state_input_vox_ch${i}`, name: `Input VOX State (CH${i})` },
+				{ variableId: `state_input_ch${i}`, name: `Input Channel State (CH${i})` },
 				{ variableId: `state_input_call_ch${i}`, name: `Input Call State (CH${i})` },
 			]
 			channelVariables.forEach(addVariable)
