@@ -64,8 +64,8 @@ class OscModule extends EventEmitter {
 			if (this.stateUpdateTimer) {
 				clearInterval(this.stateUpdateTimer)
 				this.stateUpdateTimer = null
-				this.module.log('info', 'OSC Manager: Received initial state updates from device')
 			}
+			this.module.log('info', `OSC Manager: Received complete state update from ${this.config.host}`)
 			return
 		}
 		// Handle command and state messages
@@ -159,22 +159,19 @@ class OscModule extends EventEmitter {
 		)
 	}
 
-	// Request state update from Green-GO device. Runs as a timer to ensure we receive an update when the device comes online
-	requestStateUpdate() {
+	// Request state update from the Green-GO device. Runs as a timer to ensure we receive an update when the device comes online
+	requestStateUpdate(isTimerCall = false) {
 		if (this.oscPort) {
-			const sendUpdateRequest = () => {
-				// Request state update from Green-GO device
-				this.sendCommand('update', 1)
-				if (this.stateUpdateTimer && this.companionVariables['state_heartbeat'].value != 1) {
-					this.module.log('debug', `OSC Manager: No updates received, requested new update from ${this.config.host}`)
-				} else {
-					this.module.log('debug', `OSC Manager: Requested state update from ${this.config.host}`)
-				}
+			const logMessage = isTimerCall
+				? `OSC Manager: No updates received, requesting state update from ${this.config.host}`
+				: `OSC Manager: Requesting state update from ${this.config.host}`
+
+			this.module.log('debug', logMessage)
+			this.sendCommand('update', 1)
+
+			if (!this.stateUpdateTimer) {
+				this.stateUpdateTimer = setInterval(() => this.requestStateUpdate(true), 30000)
 			}
-			// Call helper function for update request
-			sendUpdateRequest()
-			// Start the timer for requesting updates every 30 seconds. Timer is cancelled if any state update is received
-			this.stateUpdateTimer = setInterval(sendUpdateRequest, 30000)
 		} else {
 			this.module.log('debug', `OSC Manager: OSC client not initialized, cannot request update`)
 		}
@@ -185,7 +182,9 @@ class OscModule extends EventEmitter {
 		// Set the heartbeat variable to 0
 		this.updateVariableValues({ state_heartbeat: 0 })
 		// Log a warning or error
-		this.module.log('warn', `OSC Manager: Heartbeat lost`)
+		this.module.log('warn', `OSC Manager: Lost heartbet of ${this.config.host}`)
+		// Start requesting state updates
+		this.requestStateUpdate()
 	}
 
 	// Helper function to close existing connections
