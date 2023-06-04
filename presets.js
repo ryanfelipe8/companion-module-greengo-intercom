@@ -96,7 +96,7 @@ function UpdatePresets(self) {
 							actionId: 'channelCall',
 							options: {
 								chId: i,
-								callType: 1,
+								callState: 1,
 							},
 						},
 					],
@@ -105,7 +105,7 @@ function UpdatePresets(self) {
 							actionId: 'channelCall',
 							options: {
 								chId: i,
-								callType: 0,
+								callState: 0,
 							},
 						},
 					],
@@ -119,7 +119,7 @@ function UpdatePresets(self) {
 								actionId: 'channelCall',
 								options: {
 									chId: i,
-									callType: 2,
+									callState: 2,
 								},
 							},
 						],
@@ -129,7 +129,7 @@ function UpdatePresets(self) {
 							actionId: 'channelCall',
 							options: {
 								chId: i,
-								callType: 0,
+								callState: 0,
 							},
 						},
 					],

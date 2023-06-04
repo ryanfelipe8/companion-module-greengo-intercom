@@ -9,7 +9,7 @@ module.exports = function (self) {
 					id: 'cycle',
 					label: 'Cycle Talk',
 					default: false,
-					tooltip: 'Activate to toggle the talk state (latch) of the channel',
+					tooltip: 'Activate to toggle the current talk state of the channel (latch)',
 				},
 				{
 					type: 'number',
@@ -62,7 +62,7 @@ module.exports = function (self) {
 		},
 		channelCall: {
 			name: 'Send Channel Call',
-			description: 'Send a call signal to the defined channel',
+			description: 'Send a call signal to a defined channel',
 			options: [
 				{
 					type: 'number',
@@ -75,8 +75,8 @@ module.exports = function (self) {
 				},
 				{
 					type: 'dropdown',
-					label: 'Call Type',
-					id: 'callType',
+					label: 'Call Signal State',
+					id: 'callState',
 					default: 1,
 					choices: [
 						{ id: '0', label: 'Inactive' },
@@ -84,14 +84,14 @@ module.exports = function (self) {
 						{ id: '2', label: 'Alert Call' },
 					],
 					minChoicesForSearch: 0,
-					tooltip: 'Select the call signal type',
+					tooltip: 'Select the call signal state',
 				},
 			],
 			callback: (action) => {
 				let opt = action.options
 				const cmd = 'channel/call'
 
-				self.osc.sendCommand(cmd, [opt.callType, opt.chId])
+				self.osc.sendCommand(cmd, [opt.callState, opt.chId])
 			},
 		},
 		channelCue: {
@@ -103,7 +103,7 @@ module.exports = function (self) {
 					id: 'cycle',
 					label: 'Cycle Cue',
 					default: false,
-					tooltip: 'Activate to cycle the cue type depending on the current channel state',
+					tooltip: 'Activate to cycle the current cue signal on the channel',
 				},
 				{
 					type: 'number',
@@ -116,8 +116,8 @@ module.exports = function (self) {
 				},
 				{
 					type: 'dropdown',
-					label: 'Cue Type',
-					id: 'cueType',
+					label: 'Cue Signal State',
+					id: 'cueState',
 					default: 2,
 					choices: [
 						{ id: '0', label: 'Inactive' },
@@ -126,7 +126,7 @@ module.exports = function (self) {
 						{ id: '4', label: 'GO' },
 					],
 					minChoicesForSearch: 0,
-					tooltip: 'Select cue signal type',
+					tooltip: 'Select cue signal state',
 					isVisible: function (options) {
 						if (options.cycle == false) {
 							return true
@@ -138,11 +138,8 @@ module.exports = function (self) {
 				let opt = action.options
 				const cmd = 'channel/cue'
 				if (opt.cycle) {
-					// Get the variable name based on the channel ID
 					let variableName = 'state_cue_ch' + opt.chId
-					// Check if the variable exists
 					if (self.companionVariables.hasOwnProperty(variableName)) {
-						// Get the current value of the variable
 						let currentValue = self.companionVariables[variableName].value
 						// Define the cycle pattern
 						const cyclePattern = [0, 2, 3, 4]
@@ -150,14 +147,13 @@ module.exports = function (self) {
 						let index = cyclePattern.indexOf(currentValue)
 						// Increment the index, wrapping around to the start of the cycle pattern if necessary
 						index = (index + 1) % cyclePattern.length
-						// Get the new value from the cycle pattern
 						let newValue = cyclePattern[index]
 						self.osc.sendCommand(cmd, [newValue, opt.chId])
 					} else {
 						self.log('error', `Actions: Could not cycle state because variable ${variableName} does not exist.`)
 					}
 				} else {
-					self.osc.sendCommand(cmd, [opt.cueType, opt.chId])
+					self.osc.sendCommand(cmd, [opt.cueState, opt.chId])
 				}
 			},
 		},
@@ -203,11 +199,8 @@ module.exports = function (self) {
 				let opt = action.options
 				const cmd = 'channel/listen'
 				if (opt.cycle) {
-					// Get the variable name based on the channel ID
 					let variableName = 'state_listen_ch' + opt.chId
-					// Check if the variable exists
 					if (self.companionVariables.hasOwnProperty(variableName)) {
-						// Get the current value of the variable
 						let currentValue = self.companionVariables[variableName].value
 						// Switch between 1 and 0
 						let newValue = currentValue === 1 ? 0 : 1
@@ -271,14 +264,11 @@ module.exports = function (self) {
 				let opt = action.options
 				const cmd = 'channel/level'
 				if (opt.cycle) {
-					// Get the variable name based on the channel ID
 					let variableName = 'state_level_ch' + opt.chId
 					// Set a min and max level for the channel level
 					const minLevel = -40
 					const maxLevel = 12
-					// Check if the variable exists
 					if (self.companionVariables.hasOwnProperty(variableName)) {
-						// Get the current value of the variable
 						let currentValue = self.companionVariables[variableName].value
 						// Increment the current value by the step size
 						let newValue = currentValue + opt.stepSize
@@ -306,7 +296,7 @@ module.exports = function (self) {
 					id: 'cycle',
 					label: 'Cycle Direct Channel Level',
 					default: false,
-					tooltip: 'Activate to cycle the current output level of the channel',
+					tooltip: 'Activate to cycle the current output level of the direct channel',
 				},
 				{
 					type: 'number',
@@ -337,15 +327,12 @@ module.exports = function (self) {
 				let opt = action.options
 				const cmd = 'level/direct'
 				if (opt.cycle) {
-					// Get the variable name based on the channel ID
 					let variableName = 'state_level_direct'
-					// Set a min and max level for the channel level
+					// Set a min, max, and mute level for the channel level
 					const muteLevel = -63
 					const minLevel = -40
 					const maxLevel = 12
-					// Check if the variable exists
 					if (self.companionVariables.hasOwnProperty(variableName)) {
-						// Get the current value of the variable
 						let currentValue = self.companionVariables[variableName].value
 						// Increment the current value by the step size
 						let newValue = currentValue + opt.stepSize
@@ -404,7 +391,6 @@ module.exports = function (self) {
 					type: 'number',
 					label: 'Gain Level',
 					id: 'gainLevel',
-					default: 0,
 					tooltip: 'Set a specific input gain',
 					isVisible: function (options) {
 						if (options.cycle == false) {
@@ -429,11 +415,8 @@ module.exports = function (self) {
 				let opt = action.options
 				const cmd = 'audio/gain'
 				if (opt.cycle) {
-					// Get the variable name based on the channel ID
 					let variableName = 'state_audio_gain'
-					// Check if the variable exists
 					if (self.companionVariables.hasOwnProperty(variableName)) {
-						// Get the current value of the variable
 						let currentValue = self.companionVariables[variableName].value
 						// Increment the current value by the step size
 						let newValue = currentValue + opt.stepSize
@@ -442,13 +425,13 @@ module.exports = function (self) {
 						self.log('error', `Actions: Could not cycle state because variable ${variableName} does not exist.`)
 					}
 				} else {
-					self.osc.sendCommand(cmd, [gainLevel])
+					self.osc.sendCommand(cmd, [opt.gainLevel])
 				}
 			},
 		},
 		inputSource: {
 			name: 'Set Input Source',
-			description: `Mute or unmute the device's input`,
+			description: `Control the active input of the device`,
 			options: [
 				{
 					type: 'dropdown',
@@ -466,7 +449,7 @@ module.exports = function (self) {
 						{ id: '4', label: 'Muted' },
 					],
 					minChoicesForSearch: 0,
-					tooltip: 'Select input source that should be muted',
+					tooltip: 'Select the active input source',
 				},
 			],
 			callback: (action) => {
@@ -477,7 +460,7 @@ module.exports = function (self) {
 		},
 		mainLevel: {
 			name: 'Set Main Level',
-			description: 'Control the main output level of the devicelevel',
+			description: 'Control the main output level of the device',
 			options: [
 				{
 					type: 'checkbox',
@@ -515,15 +498,12 @@ module.exports = function (self) {
 				let opt = action.options
 				const cmd = 'level/main'
 				if (opt.cycle) {
-					// Get the variable name based on the channel ID
 					let variableName = 'state_level_main'
-					// Set a min and max level for main level
+					// Set a min, max, and mute level for main level
 					const muteLevel = -63
 					const minLevel = -40
 					const maxLevel = 12
-					// Check if the variable exists
 					if (self.companionVariables.hasOwnProperty(variableName)) {
-						// Get the current value of the variable
 						let currentValue = self.companionVariables[variableName].value
 						// Increment the current value by the step size
 						let newValue = currentValue + opt.stepSize
@@ -565,7 +545,7 @@ module.exports = function (self) {
 						{ id: '1', label: 'Isolate' },
 					],
 					minChoicesForSearch: 0,
-					tooltip: 'Choose isolate state',
+					tooltip: 'Select isolate state',
 					isVisible: function (options) {
 						if (options.cycle == false) {
 							return true
@@ -577,11 +557,8 @@ module.exports = function (self) {
 				let opt = action.options
 				const cmd = 'mode/isolate'
 				if (opt.cycle) {
-					// Get the variable name based on the channel ID
 					let variableName = 'state_mode_isolate'
-					// Check if the variable exists
 					if (self.companionVariables.hasOwnProperty(variableName)) {
-						// Get the current value of the variable
 						let currentValue = self.companionVariables[variableName].value
 						// Switch between 1 and 0
 						let newValue = currentValue === 1 ? 0 : 1
@@ -603,7 +580,7 @@ module.exports = function (self) {
 					id: 'cycle',
 					label: 'Cycle PGM Level',
 					default: false,
-					tooltip: 'Activate to cycle the output level of PGM special channel, depending on its current state',
+					tooltip: 'Activate to cycle the current output level of the PGM special channel',
 				},
 				{
 					type: 'number',
@@ -634,15 +611,12 @@ module.exports = function (self) {
 				let opt = action.options
 				const cmd = 'level/pgm'
 				if (opt.cycle) {
-					// Get the variable name based on the channel ID
 					let variableName = 'state_level_pgm'
-					// Define the min and max level for a channel
+					// Define the min, max, and mute level for the channel
 					const muteLevel = -63
 					const minLevel = -40
 					const maxLevel = 12
-					// Check if the variable exists
 					if (self.companionVariables.hasOwnProperty(variableName)) {
-						// Get the current value of the variable
 						let currentValue = self.companionVariables[variableName].value
 						// Increment the current value by the step size
 						let newValue = currentValue + opt.stepSize

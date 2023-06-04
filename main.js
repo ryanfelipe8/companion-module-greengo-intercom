@@ -148,7 +148,7 @@ class GreenGoModule extends InstanceBase {
 				width: 8,
 				required: true,
 				regex: Regex.IP,
-				tooltip: 'Select the IPv4 address your Green-GO device is using',
+				tooltip: 'Enter the IPv4 address of your Green-GO device',
 			},
 			{
 				type: 'textinput',
@@ -157,7 +157,7 @@ class GreenGoModule extends InstanceBase {
 				width: 4,
 				required: true,
 				regex: Regex.PORT,
-				tooltip: 'Select the port the Green-GO "osc-remote" script is using',
+				tooltip: 'Enter the port your Green-GO script is using',
 			},
 			{
 				type: 'dropdown',
@@ -186,7 +186,7 @@ class GreenGoModule extends InstanceBase {
 				min: 1,
 				max: 6,
 				regex: Regex.number,
-				tooltip: 'Define the amount of channels to control (1 - 6) via this module',
+				tooltip: 'Define the amount of channels to control via this module (1 - 6)',
 			},
 			{
 				type: 'static-text',

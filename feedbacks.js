@@ -31,7 +31,7 @@ module.exports = function (self) {
 					type: 'dropdown',
 					label: 'Call Signal State',
 					id: 'callState',
-					tooltip: 'Select the call signal type for your style',
+					tooltip: 'Select the call signal state for your style',
 					default: 1,
 					choices: [
 						{ id: 0, label: 'Idle' },
@@ -79,7 +79,7 @@ module.exports = function (self) {
 					type: 'dropdown',
 					label: 'Call Signal State',
 					id: 'callState',
-					tooltip: 'Select the call signal type for your style',
+					tooltip: 'Select the call signal state for your style',
 					default: 1,
 					choices: [
 						{ id: 0, label: 'Idle' },
@@ -201,6 +201,10 @@ module.exports = function (self) {
 			type: 'boolean',
 			name: 'Check Cue Signal',
 			description: `Change button styles depending on a channel's cue signal state`,
+			defaultStyle: {
+				bgcolor: yellow,
+				color: black,
+			},
 			options: [
 				{
 					type: 'number',
@@ -215,7 +219,7 @@ module.exports = function (self) {
 					type: 'dropdown',
 					label: 'Cue Signal State',
 					id: 'cueState',
-					tooltip: 'Select the cue signal type for your style',
+					tooltip: 'Select the cue signal state for your style',
 					default: 2,
 					choices: [
 						{ id: 0, label: 'Idle' },
@@ -294,7 +298,7 @@ module.exports = function (self) {
 						{ id: 1, label: 'Online' },
 					],
 					minChoicesForSearch: 0,
-					tooltip: 'Select the heartbeat state',
+					tooltip: `Select the device's heartbeat state`,
 				},
 			],
 			callback: (feedback) => {
@@ -370,7 +374,7 @@ module.exports = function (self) {
 						{ id: '4', label: 'Muted' },
 					],
 					minChoicesForSearch: 0,
-					tooltip: 'Select input source that should be muted',
+					tooltip: 'Select the active input source for your style',
 				},
 			],
 			callback: (feedback) => {
@@ -521,7 +525,7 @@ module.exports = function (self) {
 					label: 'PGM Level (-40 - 12, mute: -63)',
 					id: 'pgmLevel',
 					default: 0,
-					tooltip: 'Define the pgm output level',
+					tooltip: 'Define the pgm output level for your style',
 				},
 			],
 			callback: (feedback) => {
@@ -591,7 +595,7 @@ module.exports = function (self) {
 		voxStateMuted: {
 			type: 'boolean',
 			name: 'Check VOX State (Muted)',
-			description: `Change button styles depending on a channel's input VOX and listen state (incoming audio)`,
+			description: `Change button styles depending on a muted channel's input VOX state`,
 			defaultStyle: {
 				bgcolor: yellow,
 				color: black,

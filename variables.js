@@ -9,7 +9,6 @@ module.exports = function (module = {}) {
 					name: variable.name,
 					value: initialValue,
 				}
-				// module.log('debug', `Variables: Crated and initialized variable ${variable.variableId}`)
 			}
 		}
 		// Generate variables for channels
@@ -36,6 +35,7 @@ module.exports = function (module = {}) {
 			{ variableId: 'state_heartbeat', name: 'Device Online State' },
 		]
 		deviceVariables.forEach(addVariable)
+
 		// MCX(D) specific variables
 		if (module.config.deviceType == 'MCX') {
 			const mcxVariables = [
@@ -47,6 +47,7 @@ module.exports = function (module = {}) {
 			]
 			mcxVariables.forEach(addVariable)
 		}
+
 		// WPX specific variables
 		if (module.config.deviceType == 'WPX') {
 			const wpxVariables = [

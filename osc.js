@@ -28,8 +28,7 @@ class OscModule extends EventEmitter {
 			this.module.log('debug', 'OSC Manager: Running instance found, restarting the OSC listeners')
 			this.closeOSCListeners()
 		}
-
-		// Initialize OSC server
+		// Initialize OSC listener
 		this.oscPort = new osc.UDPPort({
 			localAddress: '0.0.0.0',
 			localPort: this.config.port,
@@ -37,14 +36,11 @@ class OscModule extends EventEmitter {
 			remotePort: this.config.port,
 			metadata: true,
 		})
-
 		// Add listeners for OSC messages and errors
 		this.oscPort.on('message', (oscMsg) => this.onMessage(oscMsg))
 		this.oscPort.on('error', (error) => this.onError(error))
-
 		// Open the OSC port
 		this.oscPort.open()
-
 		this.module.updateStatus(InstanceStatus.Ok)
 	}
 
@@ -56,12 +52,10 @@ class OscModule extends EventEmitter {
 			if (this.stateUpdateTimer) {
 				this.requestStateUpdate()
 			}
-
 			// Clear the existing heartbeat timer if it exists
 			if (this.heartbeatTimer) {
 				clearTimeout(this.heartbeatTimer)
 			}
-
 			// Start a new heartbeat timer and exit function
 			this.heartbeatTimer = setTimeout(() => this.handleHeartbeat(), 5000)
 		}
@@ -74,7 +68,6 @@ class OscModule extends EventEmitter {
 			}
 			return
 		}
-		// this.module.log('debug', `OSC Manager: Received message for ${oscMsg.address}: ${JSON.stringify(oscMsg.args)}`)
 		// Handle command and state messages
 		if (oscMsg.address.startsWith('/ggo/state/')) {
 			const variableName = this.parsePathToVariable(oscMsg)
@@ -108,14 +101,13 @@ class OscModule extends EventEmitter {
 			// Append "_ch+ID" to the variable name
 			variableName += '_ch' + oscMsg.args[1].value
 		}
-		// this.module.log('debug', `OSC Manager: Returning variable ${variableName} extracted from ${oscMsg.address}`)
 		return variableName
 	}
 
 	// Update variable values for Companion and internal uses
 	updateVariableValues(updates) {
-		const updatedVariables = {}
-		let count = 0 // Counter to keep track of the number of variables updated
+		let updatedVariables = {}
+		let count = 0
 
 		// Iterate over the updates
 		for (let [variableName, value] of Object.entries(updates)) {
@@ -126,42 +118,36 @@ class OscModule extends EventEmitter {
 			) {
 				// Store updates for variables whose values have changed
 				updatedVariables[variableName] = value
-
 				// Update local variable's value
 				this.companionVariables[variableName] = {
 					name: this.companionVariables[variableName].name,
 					value: value,
 				}
-
 				// Emit an event for the updated variable
 				this.emit('variableUpdated', variableName, value)
 				// Increment the counter
 				count++
 			}
 		}
-
-		// Apply the updates
+		// Apply the updates to Companion variables
 		if (Object.keys(updatedVariables).length > 0) {
 			this.module.setVariableValues(updatedVariables)
 			this.module.checkFeedbacks()
 		}
-
 		// Log the number of variables updated
 		if (count > 0) {
 			this.module.log('debug', `OSC Manager: Updated values of ${count} variables`)
 		}
 	}
 
-	// OSC message sending helper function that only sends integer values as payload
+	// Helper function to sent OSC messages
 	sendCommand(cmd, values) {
 		// Normalize `values` to always be an array, this is needed to accept multiple values
 		if (!Array.isArray(values)) {
 			values = [values]
 		}
-
 		// Map values in array and prepare the arguments
 		const args = values.map((value) => ({ type: 'i', value }))
-
 		// Send command to Green-GO device
 		this.oscPort.send({
 			address: '/ggo/cmd/' + cmd,
@@ -185,10 +171,8 @@ class OscModule extends EventEmitter {
 					this.module.log('debug', `OSC Manager: Requested state update from ${this.config.host}`)
 				}
 			}
-
 			// Call helper function for update request
 			sendUpdateRequest()
-
 			// Start the timer for requesting updates every 30 seconds. Timer is cancelled if any state update is received
 			this.stateUpdateTimer = setInterval(sendUpdateRequest, 30000)
 		} else {
@@ -200,7 +184,6 @@ class OscModule extends EventEmitter {
 	handleHeartbeat() {
 		// Set the heartbeat variable to 0
 		this.updateVariableValues({ state_heartbeat: 0 })
-
 		// Log a warning or error
 		this.module.log('warn', `OSC Manager: Heartbeat lost`)
 	}

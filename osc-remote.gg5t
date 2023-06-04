@@ -6,8 +6,8 @@ var remoteIP = "10.10.10.10"
 var controlPort = 8000
 
 // Setup OSC client and server
-osc.open(remotePort)
-osc.destination(remoteIP,remotePort)
+osc.open(controlPort)
+osc.destination(remoteIP,controlPort)
 
 // Event listener for remotely triggered state updates
 event osc.receive["/ggo/cmd/update"]
