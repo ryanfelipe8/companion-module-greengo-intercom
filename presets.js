@@ -290,7 +290,7 @@ function UpdatePresets(self) {
 					style: {
 						color: white,
 						bgcolor: red,
-						text: 'CH1\\nMuted',
+						text: `CH${i}\\nMuted`,
 					},
 				},
 				{
@@ -301,7 +301,7 @@ function UpdatePresets(self) {
 					style: {
 						color: yellow,
 						bgcolor: red,
-						text: 'CH1\\nMuted',
+						text: `CH${i}\\nMuted`,
 					},
 				},
 			],
