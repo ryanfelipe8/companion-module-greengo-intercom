@@ -2,9 +2,11 @@
 
 The _Green-GO Intercom OSC Remote_ is a Bitfocus Companion (v3.0) module allowing users to control a wired Green-GO intercom device over the local network.
 
-#### General Information
+#### General Information & Limitations
 
 Because of limitations in the scripting VM present on current Green-GO devices, this Companion module enables you to remotely control a _maximum of 6 channels_ (channels 1 - 6).
+
+It is also worth mentioning that we currently can't support Green-GO WAA antennas or WBPX(SP) belt packs as can't control those devices via OSC.
 
 Please check the tables below for an overview of supported button actions and feedbacks. Also, remember to use the available button presets for easy setup.
 
@@ -12,7 +14,7 @@ If you need more information about the Companion module, please refer to our [do
 
 ##### Prerequisites
 
-- Green-GO device using at least [firmware](https://manual.greengoconnect.com/en/release-notes/firmware/) v5.0.3.0255 or above (WAA and WBPX are not supported).
+- Green-GO device using at least [firmware](https://manual.greengoconnect.com/en/release-notes/firmware/) v5.0.3.0255 or above.
 - Get the [osc-remote.gg5t](https://github.com/bitfocus/companion-module-greengo-intercom/blob/master/osc-remote.gg5t) script and add it to your configuration.
 - Use the integrated script editor to adjust the `remoteIP` (Companion) and `controlPort` to fit your needs.
 - Compile the script to create a binary script for your device(s).
@@ -28,25 +30,25 @@ There are a few configuration options, of which currently only the first two are
 - **Device Type:** This option is a placeholder. It currently _serves no function_ and can be ignored.<br>Once the Green-GO firmware exposes OSC endpoints, this placeholder will define available states and variables.
 - **Channel Count:** Define the number of channels (1 - 6) to control the amount of actions, feedbacks, presets, and variables created for this module. Using a lower number of channels can improve performance and reduce network load.
 
-##### Included Actions
+##### Available Button Actions
 
-| Action                    | What it does                                                           |
-| :------------------------ | :--------------------------------------------------------------------- |
-| Set Channel Talk          | Control the talk state of a channel (cycles)                           |
-| Send Channel Call         | Control the call state of a channel                                    |
-| Send Channel Cue          | Control the cue state of a channel (cycles)                            |
-| Set Channel Listen &nbsp; | Control the listen state (mute channel output) of a channel (cycles)   |
-| Set Channel Level         | Control the output level of a channel (cycles)                         |
-| Set PGM Level             | Control the output level of the program audio special channel (cycles) |
-| Set Main Level            | Control the main output level of the device (cycles)                   |
-| Set Input Gain            | Control the input gain of the device's active input (cycles)           |
-| Set Input Source          | Control the active input source of the user                            |
-| Set Isolate State         | Control the state of the isolate function (cycles)                     |
-| Identify Device           | Call the device's identfy function to let its status lights blink      |
+| Action                    | What it does                                                      |
+| :------------------------ | :---------------------------------------------------------------- |
+| Set Channel Talk          | Control the talk state of a channel                               |
+| Send Channel Call         | Control the call state of a channel                               |
+| Send Channel Cue          | Control the cue state of a channel                                |
+| Set Channel Listen &nbsp; | Control the listen state (mute channel output) of a channel       |
+| Set Channel Level         | Control the output level of a channel                             |
+| Set PGM Level             | Control the output level of the program audio special channel     |
+| Set Main Level            | Control the main output level of the device                       |
+| Set Input Gain            | Control the input gain of the device's active input               |
+| Set Input Source          | Control the active input source of the user                       |
+| Set Isolate State         | Control the state of the isolate function                         |
+| Identify Device           | Call the device's identfy function to let its status lights blink |
 
 <br>
 
-##### Included Feedbacks
+##### Available Button Feedbacks
 
 | Feedback                    | What it does                                                                                   |
 | :-------------------------- | :--------------------------------------------------------------------------------------------- |
