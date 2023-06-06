@@ -1261,7 +1261,7 @@ function UpdatePresets(self) {
 				style: {
 					color: white,
 					bgcolor: green,
-					text: 'Device\\nOnline',
+					text: `${self.config.deviceType}\\nOnline`,
 				},
 			},
 			{
@@ -1272,7 +1272,7 @@ function UpdatePresets(self) {
 				style: {
 					color: white,
 					bgcolor: red,
-					text: 'Device\\nOffline',
+					text: `${self.config.deviceType}\\nOffline`,
 				},
 			},
 			{
@@ -1283,7 +1283,7 @@ function UpdatePresets(self) {
 				style: {
 					color: white,
 					bgcolor: blue,
-					text: 'Device\\nMissing',
+					text: `${self.config.deviceType}\\nMissing`,
 				},
 			},
 		],
