@@ -23,7 +23,7 @@ event osc.receive["/ggo/cmd/update"]
     osc.send("/ggo/state/level/main",audio.main.level)
     osc.send("/ggo/state/level/pgm",special.program.level)
     osc.send("/ggo/state/level/direct",special.direct.level)
-    osc.send("/ggo/state/audio/gain",audio.gain)
+    osc.send("/ggo/state/audio/gain",radio.gain !=0 ? radio.gain : audio.gain)
     osc.send("/ggo/state/audio/source",audio.source)
     osc.send("/ggo/state/mode/isolate",settings.isolate)
     osc.send("/ggo/state/updated",1)
@@ -74,6 +74,9 @@ event special.direct.level
 end
 event audio.gain
     osc.send("/ggo/state/audio/gain",audio.gain)
+end
+event radio.gain
+    osc.send("/ggo/state/audio/gain",radio.gain)
 end
 event audio.source
     osc.send("/ggo/state/audio/source",audio.source)
@@ -131,6 +134,7 @@ event osc.receive["/ggo/cmd/level/direct"]
     special.direct.level = osc.read(1)
 end
 event osc.receive["/ggo/cmd/audio/gain"]
+    radio.gain = osc.read(1)
     audio.gain = osc.read(1)
 end
 event osc.receive["/ggo/cmd/audio/source"]
