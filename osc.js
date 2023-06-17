@@ -182,7 +182,7 @@ class OscModule extends EventEmitter {
 		// Set the heartbeat variable to 0
 		this.updateVariableValues({ state_heartbeat: 0 })
 		// Log a warning or error
-		this.module.log('warn', `OSC Manager: Lost heartbet of ${this.config.host}`)
+		this.module.log('warn', `OSC Manager: Lost heartbeat of ${this.config.host}`)
 		// Start requesting state updates
 		this.requestStateUpdate()
 	}

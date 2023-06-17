@@ -1,10 +1,10 @@
 const { InstanceBase, Regex, runEntrypoint, InstanceStatus } = require('@companion-module/base')
-const UpgradeScripts = require('./upgrades')
-const UpdateActions = require('./actions')
-const UpdateFeedbacks = require('./feedbacks')
-const UpdateVariableDefinitions = require('./variables')
+const UpgradeScripts = require('./upgrades.js')
+const UpdateActions = require('./actions.js')
+const UpdateFeedbacks = require('./feedbacks.js')
+const UpdateVariableDefinitions = require('./variables.js')
 const UpdatePresets = require('./presets.js')
-const OscManager = require('./osc')
+const OscManager = require('./osc.js')
 
 class GreenGoModule extends InstanceBase {
 	constructor(internal) {
@@ -39,7 +39,7 @@ class GreenGoModule extends InstanceBase {
 				this.updateStatus(InstanceStatus.Error, error.message)
 			}
 		} else {
-			let msg = 'IP or port configuration not found'
+			let msg = `Please configure the module's connection (IP, port)`
 			this.updateStatus(InstanceStatus.BadConfig, msg)
 		}
 	}
@@ -92,7 +92,7 @@ class GreenGoModule extends InstanceBase {
 
 		this.updateActions()
 		this.updateFeedbacks()
-		await this.updatePresets()
+		this.updatePresets()
 	}
 
 	// Destroy when module gets deleted
@@ -135,7 +135,7 @@ class GreenGoModule extends InstanceBase {
 		await this.updateVariables()
 		this.updateActions()
 		this.updateFeedbacks()
-		await this.updatePresets()
+		this.updatePresets()
 	}
 
 	// Return config fields for web config
@@ -166,15 +166,19 @@ class GreenGoModule extends InstanceBase {
 				width: 8,
 				default: 'BPX',
 				choices: [
-					{ id: 'BPX', label: 'BPX' },
+					{ id: 'BPX', label: 'BPX(SP)' },
 					{ id: 'MCX', label: 'MCX(D)' },
 					{ id: 'WPX', label: 'WPX' },
+					// { id: 'BridgeX', label: 'BridgeX' },
+					{ id: 'DNTI', label: 'DNTI' },
+					// { id: 'INTX', label: 'INTX' },
+					{ id: 'Q4WR', label: 'Q4WR' },
 					{ id: 'RDX', label: 'RDX' },
-					{ id: 'SIWR', label: 'Si2WR/Si4WR' },
-					{ id: 'INTX', label: 'INTX' },
+					{ id: 'SI2WR', label: 'Si2WR' },
+					{ id: 'SI4WR', label: 'Si4WR' },
 				],
 				minChoicesForSearch: 0,
-				tooltip: 'Select the type of Green-GO device you are connecting to (only placholder, has no real function)',
+				tooltip: 'Select the type of Green-GO device you are connecting to',
 			},
 			{
 				type: 'number',
