@@ -1201,7 +1201,7 @@ module.exports = function (self) {
 			name: `Device connection indicator`,
 			style: {
 				text: `Device Status`,
-				size: 'auto',
+				size: '18',
 				color: white,
 				bgcolor: black,
 			},

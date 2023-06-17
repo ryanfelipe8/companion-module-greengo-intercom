@@ -30,7 +30,6 @@ module.exports = function (self) {
 						choices: [
 							{ id: '0', label: 'Disabled' },
 							{ id: '2', label: 'Latch' },
-							{ id: '3', label: 'Momentary' },
 						],
 						minChoicesForSearch: 0,
 						tooltip: 'Select the talk state',
